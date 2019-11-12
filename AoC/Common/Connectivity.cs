@@ -5,11 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 using AoC.Common.Exceptions;
 using AoC.Common.ExtensionMethods;
+
+using HtmlAgilityPack;
 
 namespace AoC.Common
 {
@@ -52,6 +55,7 @@ namespace AoC.Common
                 {
                     Console.WriteLine("Request to get input data responded with status code: " + response.StatusCode.ToString());
                     ++downloadAttempts;
+                    Thread.Sleep(500);
                 }
             }
 
@@ -81,22 +85,39 @@ namespace AoC.Common
             return File.ReadAllText(Path.Combine("Data", year.ToString(), day.ToString() + ".txt")).Trim();
         }
 
-        private static async Task<HttpResponseMessage> PostSolutionRequest (int year, int day, string solution)
+        private static async Task<Stream> PostSolutionRequest (int year, int day, string solution)
         {
             var postContent = new FormUrlEncodedContent(
                 new Dictionary<string, string> {
                     { "answer", solution }
                 }.ToList());
-            return await Client.PostAsync(String.Format("https://adventofcode.com/{0}/day/{1}/answer", year, day), postContent);
+            var response = await Client.PostAsync(String.Format("https://adventofcode.com/{0}/day/{1}/answer", year, day), postContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContentStream = await response.Content.ReadAsStreamAsync();
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.Load(responseContentStream);
+
+                var solutionResponse = htmlDoc.DocumentNode.ChildNodes.Single(n => n.Name == "html").ChildNodes.Single(n => n.Name == "body").ChildNodes.Single(n => n.Name == "main").InnerText.Trim();
+                
+                if (solutionResponse.StartsWith("--- Day " + day.ToString()))
+                {
+                    // Puzzle already solved...?
+
+                }
+                else
+                {
+                }
+            }
+
+
+            return null;
         }
 
         public static bool SubmitSolution(int year, int day, string solution)
         {
             var solutionResponse = PostSolutionRequest(year, day, solution).GetAwaiter().GetResult();
-
-            Console.WriteLine(solutionResponse.StatusCode);
-            Console.WriteLine(solutionResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-            Console.WriteLine();
 
             return false;
         }

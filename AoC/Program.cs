@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using System.Security.Cryptography;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
-using System.Net;
-using System.Net.Http;
+using HtmlAgilityPack;
 
 using AoC.Common;
+using AoC.Common.ExtensionMethods;
 
 namespace AoC
 {
@@ -88,16 +86,20 @@ namespace AoC
 
         static void Main(string[] args)
         {
-            var data = Connectivity.SubmitSolution(2016, 17, "500");
+            var response_doc = new HtmlDocument();
+            response_doc.Load("C:\\aoc_response.htm");
+            var response_text = response_doc.DocumentNode.ChildNodes.Single(n => n.Name == "html").ChildNodes.Single(n => n.Name == "body").ChildNodes.Single(n => n.Name == "main").InnerText.Trim();
 
-            Console.WriteLine(data);
+            Console.WriteLine(response_text.StartsWith("That's"));
+
+            Console.WriteLine(response_text);
             Console.ReadLine();
 
-            var input = data;
+            var input = "";
             var paths = new List<string>();
             var openChars = (new char[] { 'B', 'C', 'D', 'E', 'F' });
 
-            var availableStates = new List<State> { new State(0, 0, "") };
+            var availableStates = new List<State> { new State(0, 0, input) };
             var exitFound = false;
 
             while (!exitFound)

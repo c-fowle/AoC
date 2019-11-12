@@ -4,3 +4,5 @@
 
 /AoC/Data/AoCKey.txt
 /AoC/obj/*
+/AoC/bin/Debug
+/.vs

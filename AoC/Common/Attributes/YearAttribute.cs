@@ -2,7 +2,7 @@
 
 namespace AoC.Common.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class YearAttribute : Attribute
     {
         public int YearValue { get; }
