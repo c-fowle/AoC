@@ -6,3 +6,4 @@
 /AoC/obj/*
 /AoC/bin/Debug
 /.vs
+/AoC/Data/SolvedPuzzles.txt

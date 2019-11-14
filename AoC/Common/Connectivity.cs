@@ -85,10 +85,11 @@ namespace AoC.Common
             return File.ReadAllText(Path.Combine("Data", year.ToString(), day.ToString() + ".txt")).Trim();
         }
 
-        private static async Task<Stream> PostSolutionRequest (int year, int day, string solution)
+        private static async Task<string> PostSolutionRequest (int year, int day, int part, string solution)
         {
             var postContent = new FormUrlEncodedContent(
                 new Dictionary<string, string> {
+                    { "level", part.ToString() },
                     { "answer", solution }
                 }.ToList());
             var response = await Client.PostAsync(String.Format("https://adventofcode.com/{0}/day/{1}/answer", year, day), postContent);
@@ -99,27 +100,19 @@ namespace AoC.Common
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.Load(responseContentStream);
 
-                var solutionResponse = htmlDoc.DocumentNode.ChildNodes.Single(n => n.Name == "html").ChildNodes.Single(n => n.Name == "body").ChildNodes.Single(n => n.Name == "main").InnerText.Trim();
-                
-                if (solutionResponse.StartsWith("--- Day " + day.ToString()))
-                {
-                    // Puzzle already solved...?
+                var solutionResponse = htmlDoc.DocumentNode.InnerText.Trim();
 
-                }
-                else
-                {
-                }
+                if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
+                if (!File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"))) File.Create(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"));
+
+                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"), solutionResponse);
+
+                return solutionResponse;
             }
-
 
             return null;
         }
 
-        public static bool SubmitSolution(int year, int day, string solution)
-        {
-            var solutionResponse = PostSolutionRequest(year, day, solution).GetAwaiter().GetResult();
-
-            return false;
-        }
+        public static string SubmitSolution(int year, int day, int part, string solution) => PostSolutionRequest(year, day, part, solution).GetAwaiter().GetResult();
     }
 }
