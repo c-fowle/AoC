@@ -19,12 +19,5 @@ namespace AoC.Common.Attributes
             Part1Result = part1Result;
             Part2Result = part2Result;
         }
-
-        public string GetResultForPart(int part)
-        {
-            if (part == 1) return Part1Result;
-            if (part == 2) return Part2Result;
-            return null;
-        }
     }
 }

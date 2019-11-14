@@ -50,7 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2017\Day05\Year2017Day05.cs" />
     <Compile Include="Common\Attributes\TestAttribute.cs" />
     <Compile Include="Common\Connectivity.cs" />
     <Compile Include="Common\Attributes\DayAttribute.cs" />
@@ -63,7 +62,6 @@
     <Compile Include="Common\ExtensionMethods\IEnumerableExtensions.cs" />
     <Compile Include="Common\Attributes\YearAttribute.cs" />
     <Compile Include="Common\PuzzleResult.cs" />
-    <Compile Include="Common\SolutionResponse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -73,12 +71,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\AocKey.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SolvedPuzzles.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="2015\" />
+    <Folder Include="2016\" />
+    <Folder Include="2017\" />
+    <Folder Include="2018\" />
+    <Folder Include="2019\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
