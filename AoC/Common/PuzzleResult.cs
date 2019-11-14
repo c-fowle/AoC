@@ -2,17 +2,25 @@
 
 namespace AoC.Common
 {
-    public class PuzzleResult<T>
+    public class PuzzleResult
     {
-        public T Solution { get; }
+        public string Solution { get; }
         public TimeSpan ExecutionTime { get; }
-        public string SubmissionResponse { get; }
+        public string FullTextResponse { get; }
+        public SolutionResponse SolutionResponse { get; }
 
-        public PuzzleResult(T solution, TimeSpan executionTime, string submissionResponse)
+        public PuzzleResult(string solution, TimeSpan executionTime, string fullTextResponse)
         {
             Solution = solution;
             ExecutionTime = executionTime;
-            SubmissionResponse = submissionResponse;
+            FullTextResponse = fullTextResponse;
+        }
+        public PuzzleResult(string solution, TimeSpan executionTime, bool success)
+        {
+            Solution = solution;
+            ExecutionTime = executionTime;
+            FullTextResponse = null;
+            SolutionResponse = success ? SolutionResponse.Correct : SolutionResponse.IncorrectNoInformation;
         }
     }
 }
