@@ -53,9 +53,7 @@ namespace AoC.Common
                 var result = Monitor(() => partFunction(testAttribute.Input));
                 var testPassed = result.Item1 == testAttribute.GetResultForPart(part);
 
-                Console.WriteLine("Test {0} (Expected: {1}; Got: {2})", testPassed ? "passed" : "failed", result.Item1, testAttribute.GetResultForPart(part));
-
-                return new PuzzleResult(result.Item1, result.Item2, testPassed);
+                return new PuzzleResult(result.Item1, result.Item2, "Expected: " + testAttribute.GetResultForPart(part) + "; Got: " + result.Item1, testPassed);
             }).ToList();
         }
 

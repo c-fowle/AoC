@@ -15,11 +15,11 @@ namespace AoC.Common
             ExecutionTime = executionTime;
             FullTextResponse = fullTextResponse;
         }
-        public PuzzleResult(string solution, TimeSpan executionTime, bool success)
+        public PuzzleResult(string solution, TimeSpan executionTime, string fullTextDetail, bool success)
         {
             Solution = solution;
             ExecutionTime = executionTime;
-            FullTextResponse = null;
+            FullTextResponse = fullTextDetail;
             SolutionResponse = success ? SolutionResponse.Correct : SolutionResponse.IncorrectNoInformation;
         }
     }
