@@ -64,6 +64,7 @@
     <Compile Include="Common\Attributes\YearAttribute.cs" />
     <Compile Include="Common\PuzzleResult.cs" />
     <Compile Include="Common\SolutionResponse.cs" />
+    <Compile Include="Common\SubmittedSolution.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

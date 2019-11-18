@@ -57,12 +57,31 @@ namespace AoC.Common
             }).ToList();
         }
 
-        public PuzzleResult Solve(int part, bool autoSubmit)
+        public PuzzleResult Solve(int part, bool autoSubmit, IList<SubmittedSolution> solutionHistory)
         {
             Func<string, string> partFunction = GetPartFunction(part);
             if (partFunction == null) return null;
 
             var result = Monitor(() => partFunction(Input));
+
+            var previousMatchingSolution = solutionHistory.FirstOrDefault(ss => ss.Solution == result.Item1);
+            if (previousMatchingSolution != null) return new PuzzleResult(result.Item1, result.Item2, previousMatchingSolution.Response, true);
+
+            var previousCorrectSolution = solutionHistory.FirstOrDefault(ss => ss.Response == SolutionResponse.Correct);
+            if (previousCorrectSolution != null)
+            {
+                var parsedCorrectSolution = 0;
+                var parsedCurrentSolution = 0;
+
+                if (int.TryParse(previousCorrectSolution.Solution, out parsedCorrectSolution) && int.TryParse(result.Item1, out parsedCurrentSolution))
+                {
+                    if (parsedCurrentSolution > parsedCorrectSolution) return new PuzzleResult(result.Item1, result.Item2, SolutionResponse.IncorrectTooHigh, false);
+                    if (parsedCurrentSolution < parsedCorrectSolution) return new PuzzleResult(result.Item1, result.Item2, SolutionResponse.IncorrectTooLow, false);
+                }
+
+                return new PuzzleResult(result.Item1, result.Item2, SolutionResponse.IncorrectNoInformation, false);
+            }
+
             return new PuzzleResult(result.Item1, result.Item2, autoSubmit ? Connectivity.SubmitSolution(Year, Day, part, result.Item1) : null);
         }
 

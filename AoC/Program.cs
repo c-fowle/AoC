@@ -144,7 +144,7 @@ namespace AoC
             if (!Directory.Exists("Data")) Directory.CreateDirectory("Data");
             if (!File.Exists(Path.Combine("Data", "SolvedPuzzles.txt"))) File.Create(Path.Combine("Data", "SolvedPuzzles.txt"));
 
-            var solvedPuzzles = File.ReadAllLines(Path.Combine("Data", "SolvedPuzzles.txt"));
+            var solvedPuzzles = File.ReadAllLines(Path.Combine("Data", "SolvedPuzzles.txt")).ToList();
 
             Console.WriteLine("Current day in EST: {0}/{1}/{2}", currentDayEST.Year, currentDayEST.Month, currentDayEST.Day);
 
@@ -288,7 +288,7 @@ namespace AoC
                         Console.WriteLine(ex.StackTrace);
                     }
 
-                    if (puzzleTestResults != null && puzzleTestResults.Count() > 0 && puzzleTestResults.All(result =>
+                    if (puzzleTestResults != null || puzzleTestResults.Count() > 0 || puzzleTestResults.All(result =>
                     {
                         if (result.SolutionResponse != SolutionResponse.Correct)
                         {
@@ -297,8 +297,13 @@ namespace AoC
                         return result.SolutionResponse == SolutionResponse.Correct;
                     }))
                     {
+                        if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
+                        if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.CreateText(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"));
+
+                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).ToList();
+
                         Console.WriteLine("All tests passed, continuing with solution...");
-                        var solutionResult = puzzleToRun.Solve(partToRun, autoSubmit.Value);
+                        var solutionResult = puzzleToRun.Solve(partToRun, autoSubmit.Value, solutionHistory);
 
                         Console.WriteLine("Solution:");
                         Console.WriteLine(solutionResult.Solution);
@@ -314,6 +319,13 @@ namespace AoC
                             {
                                 case SolutionResponse.Correct:
                                     Console.WriteLine("correct!");
+                                    
+                                    if (!solvedPuzzles.Contains(selectedYear.Value.ToString() + "_" + selectedDay.Value.ToString() + "_" + partToRun.ToString()))
+                                    {
+                                        solvedPuzzles.Add(selectedYear.Value.ToString() + "_" + selectedDay.Value.ToString() + "_" + partToRun.ToString());
+                                        File.WriteAllLines(Path.Combine("Data", "SolvedPuzzles.txt"), solvedPuzzles);
+                                    }
+
                                     break;
                                 case SolutionResponse.IncorrectNoInformation:
                                     Console.WriteLine("incorrect...");
@@ -324,12 +336,22 @@ namespace AoC
                                 case SolutionResponse.IncorrectTooLow:
                                     Console.WriteLine("incorrect, the answer was too low...");
                                     break;
+                                case SolutionResponse.WaitToSubmit:
+                                    Console.WriteLine("submitted too soon...");
+                                    Console.WriteLine("Wait another {0}m {1}s until submitting again", solutionResult.WaitTime?.Minutes, solutionResult.WaitTime?.Seconds);
+                                    break;
                                 case SolutionResponse.Unrecognised:
                                 default:
                                     Console.WriteLine("unknown - unable to parse response");
                                     Console.WriteLine("Full response from AoC:");
                                     Console.WriteLine(solutionResult.FullTextResponse);
                                     break;
+                            }
+
+                            if (solutionResult.SolutionResponse != SolutionResponse.WaitToSubmit && solutionResult.SolutionResponse != SolutionResponse.Unrecognised && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
+                            {
+                                solutionHistory.Add(new SubmittedSolution(solutionResult.Solution, solutionResult.SolutionResponse));
+                                File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
                             }
                         }
                     }

@@ -5,6 +5,6 @@ namespace AoC.Common
     interface IPuzzle
     {
         IList<PuzzleResult> Test(int part);
-        PuzzleResult Solve(int part, bool autoSubmit);
+        PuzzleResult Solve(int part, bool autoSubmit, IList<SubmittedSolution> solutionHistory);
     }
 }

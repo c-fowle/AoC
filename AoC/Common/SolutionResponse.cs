@@ -7,6 +7,7 @@
         IncorrectNoInformation = 2,
         IncorrectTooLow = 3,
         IncorrectTooHigh = 4,
-        Correct = 5
+        Correct = 5,
+        WaitToSubmit = 6
     }
 }

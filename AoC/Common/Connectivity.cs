@@ -103,9 +103,10 @@ namespace AoC.Common
                 var solutionResponse = htmlDoc.DocumentNode.InnerText.Trim();
 
                 if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
-                if (!File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"))) File.Create(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"));
 
-                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response.txt"), solutionResponse);
+                var response_count = 0;
+                while (File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + "_.txt"))) ++response_count;
+                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response" + response_count.ToString() + ".txt"), solutionResponse);
 
                 return solutionResponse;
             }
