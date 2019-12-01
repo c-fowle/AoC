@@ -8,16 +8,16 @@ namespace AoC.Common
 {
     public class SubmittedSolution
     {
-        public string Part { get; }
+        public int Part { get; }
         public string Solution { get; }
         public SolutionResponse Response { get; }
         public SubmittedSolution(params string[] stringData)
         {
-            Part = stringData[0];
+            Part = int.Parse(stringData[0]);
             Solution = stringData[1];
             Response = (SolutionResponse)int.Parse(stringData[2]);
         }
-        public SubmittedSolution(string part, string solution, SolutionResponse response)
+        public SubmittedSolution(int part, string solution, SolutionResponse response)
         {
             Part = part;
             Solution = solution;

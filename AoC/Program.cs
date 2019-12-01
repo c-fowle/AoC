@@ -276,7 +276,7 @@ namespace AoC
                         if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
                         if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.CreateText(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"));
 
-                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partsToRun.ToString()).ToList();
+                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partToRun).ToList();
 
                         Console.WriteLine("All tests passed, continuing with solution...");
                         var solutionResult = puzzleToRun.Solve(partToRun, autoSubmit.Value, solutionHistory);
@@ -285,6 +285,14 @@ namespace AoC
                         Console.WriteLine(solutionResult.Solution);
                         Console.WriteLine("Calculated in:");
                         Console.WriteLine("{0}:{1}:{2}.{3}", solutionResult.ExecutionTime.Hours, solutionResult.ExecutionTime.Minutes, solutionResult.ExecutionTime.Seconds, solutionResult.ExecutionTime.Milliseconds);
+
+                        if (solutionResult.RepeatedSubmission || solutionResult.ComparedWithCached)
+                        {
+                            Console.WriteLine();
+                            Console.Write("SUBMISSION SKIPPED - ");
+                            Console.WriteLine(solutionResult.RepeatedSubmission ? "Duplicate submission in history" : "Correct solution was already found in submission history");
+
+                        }
 
                         if (autoSubmit.Value)
                         {
@@ -326,7 +334,7 @@ namespace AoC
 
                             if (solutionResult.SolutionResponse != SolutionResponse.WaitToSubmit && solutionResult.SolutionResponse != SolutionResponse.Unrecognised && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
                             {
-                                solutionHistory.Add(new SubmittedSolution(partsToRun.ToString(), solutionResult.Solution, solutionResult.SolutionResponse));
+                                solutionHistory.Add(new SubmittedSolution(partToRun, solutionResult.Solution, solutionResult.SolutionResponse));
                                 File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
                             }
                         }

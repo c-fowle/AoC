@@ -65,14 +65,14 @@ namespace AoC.Common
         public static string FetchInput(int year, int day)
         {
             // Create the necessary year directory if it does not exist
-            if (!Directory.Exists(Path.Combine("Data", year.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString()));
+            if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
             
             // Check if data has already been downloaded and stored -> if not, fetch data and return it
-            if (!File.Exists(Path.Combine("Data", year.ToString(), day.ToString() + ".txt")))
+            if (!File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "Input.txt")))
             {
                 var input = DownloadInput(year, day).GetAwaiter().GetResult()?.Trim();
 
-                using (var inputFile = File.Create(Path.Combine("Data", year.ToString(), day.ToString() + ".txt")))
+                using (var inputFile = File.Create(Path.Combine("Data", year.ToString(), day.ToString(), "Input.txt")))
                 using (var writer = new StreamWriter(inputFile))
                 {
                     writer.Write(input);
@@ -82,7 +82,7 @@ namespace AoC.Common
             }
 
             // If file already exists, read data from file to return
-            return File.ReadAllText(Path.Combine("Data", year.ToString(), day.ToString() + ".txt")).Trim();
+            return File.ReadAllText(Path.Combine("Data", year.ToString(), day.ToString(), "Input.txt")).Trim();
         }
 
         private static async Task<string> PostSolutionRequest (int year, int day, int part, string solution)
@@ -105,8 +105,8 @@ namespace AoC.Common
                 if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
 
                 var response_count = 0;
-                while (File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + "_.txt"))) ++response_count;
-                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response" + response_count.ToString() + ".txt"), solutionResponse);
+                while (File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"))) ++response_count;
+                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"), solutionResponse);
 
                 return solutionResponse;
             }
