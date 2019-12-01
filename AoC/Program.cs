@@ -118,7 +118,7 @@ namespace AoC
 
             // Check for solution file
             if (!Directory.Exists("Data")) Directory.CreateDirectory("Data");
-            if (!File.Exists(Path.Combine("Data", "SolvedPuzzles.txt"))) File.Create(Path.Combine("Data", "SolvedPuzzles.txt"));
+            if (!File.Exists(Path.Combine("Data", "SolvedPuzzles.txt"))) File.Create(Path.Combine("Data", "SolvedPuzzles.txt")).Close();
 
             var solvedPuzzles = File.ReadAllLines(Path.Combine("Data", "SolvedPuzzles.txt")).ToList();
 
@@ -274,7 +274,7 @@ namespace AoC
                     }))
                     {
                         if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
-                        if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.CreateText(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"));
+                        if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.Create(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).Close();
 
                         var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partToRun).ToList();
 
