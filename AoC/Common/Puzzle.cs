@@ -50,11 +50,13 @@ namespace AoC.Common
 
             return GetType().GetCustomAttributes<TestAttribute>().ForEach(testAttribute =>
             {
+                if (testAttribute.GetResultForPart(part) == null) return null;
+
                 var result = Monitor(() => partFunction(testAttribute.Input));
                 var testPassed = result.Item1 == testAttribute.GetResultForPart(part);
 
                 return new PuzzleResult(result.Item1, result.Item2, "Expected: " + testAttribute.GetResultForPart(part) + "; Got: " + result.Item1, testPassed);
-            }).ToList();
+            }).Where(pr => pr != null).ToList();
         }
 
         public PuzzleResult Solve(int part, bool autoSubmit, IList<SubmittedSolution> solutionHistory)

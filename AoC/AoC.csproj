@@ -51,6 +51,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2017\Day05\Year2017Day05.cs" />
+    <Compile Include="2019\Day03.cs" />
+    <Compile Include="2019\Day04.cs" />
+    <Compile Include="2019\Day05.cs" />
+    <Compile Include="2019\Day06.cs" />
+    <Compile Include="2019\Day07.cs" />
+    <Compile Include="2019\Day08.cs" />
+    <Compile Include="2019\Day09.cs" />
+    <Compile Include="2019\Day18.cs" />
+    <Compile Include="2019\Day10.cs" />
+    <Compile Include="2019\Day19.cs" />
+    <Compile Include="2019\Day11.cs" />
+    <Compile Include="2019\Day20.cs" />
+    <Compile Include="2019\Day12.cs" />
+    <Compile Include="2019\Day21.cs" />
+    <Compile Include="2019\Day13.cs" />
+    <Compile Include="2019\Day22.cs" />
+    <Compile Include="2019\Day14.cs" />
+    <Compile Include="2019\Day23.cs" />
+    <Compile Include="2019\Day15.cs" />
+    <Compile Include="2019\Day24.cs" />
+    <Compile Include="2019\Day16.cs" />
+    <Compile Include="2019\Day25.cs" />
+    <Compile Include="2019\Day17.cs" />
+    <Compile Include="2019\Day02.cs" />
+    <Compile Include="2019\Day01.cs" />
     <Compile Include="Common\Attributes\TestAttribute.cs" />
     <Compile Include="Common\Connectivity.cs" />
     <Compile Include="Common\Attributes\DayAttribute.cs" />
@@ -73,8 +98,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\AocKey.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Data\AoCKey.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\SolvedPuzzles.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

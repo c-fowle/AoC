@@ -8,21 +8,24 @@ namespace AoC.Common
 {
     public class SubmittedSolution
     {
+        public string Part { get; }
         public string Solution { get; }
         public SolutionResponse Response { get; }
         public SubmittedSolution(params string[] stringData)
         {
-            Solution = stringData[0];
-            Response = (SolutionResponse)int.Parse(stringData[1]);
+            Part = stringData[0];
+            Solution = stringData[1];
+            Response = (SolutionResponse)int.Parse(stringData[2]);
         }
-        public SubmittedSolution(string solution, SolutionResponse response)
+        public SubmittedSolution(string part, string solution, SolutionResponse response)
         {
+            Part = part;
             Solution = solution;
             Response = response;
         }
         public override string ToString()
         {
-            return Solution + ";" + ((int)Response).ToString();
+            return Part + ";" + Solution + ";" + ((int)Response).ToString();
         }
     }
 }

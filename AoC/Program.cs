@@ -67,31 +67,7 @@ namespace AoC
     }
 
     class Program
-    {
-        //static async Task<string> GetData()
-        //{
-        //    var cookieContainer = new CookieContainer();
-        //    var baseAddress = new Uri("https://adventofcode.com/");
-        //    cookieContainer.Add(baseAddress, new Cookie("session", "53616c7465645f5f7ea0accac870d924561d4d07ee2e53daac23fde9844e78753231821078caa884d5a8b4a591b45b6c"));
-
-        //    var client = new HttpClient(
-        //        new HttpClientHandler
-        //        {
-        //            CookieContainer = cookieContainer,
-        //            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        //        });
-        //    client.BaseAddress = baseAddress;
-
-        //    var data = "";
-
-        //    //var request = new HttpRequestMessage(HttpMethod.Get, );
-        //    var response = await client.GetAsync("https://adventofcode.com/2016/day/17/input");
-
-        //    return await response.Content.ReadAsStringAsync();
-        //}
-
-        
-
+    {      
         static void Main(string[] args)
         {
             Console.WriteLine("### ADVENT OF CODE PUZZLE RUNNER ###");
@@ -288,7 +264,7 @@ namespace AoC
                         Console.WriteLine(ex.StackTrace);
                     }
 
-                    if (puzzleTestResults != null || puzzleTestResults.Count() > 0 || puzzleTestResults.All(result =>
+                    if (puzzleTestResults == null || puzzleTestResults.Count() == 0 || puzzleTestResults.All(result =>
                     {
                         if (result.SolutionResponse != SolutionResponse.Correct)
                         {
@@ -300,7 +276,7 @@ namespace AoC
                         if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
                         if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.CreateText(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"));
 
-                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).ToList();
+                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partsToRun.ToString()).ToList();
 
                         Console.WriteLine("All tests passed, continuing with solution...");
                         var solutionResult = puzzleToRun.Solve(partToRun, autoSubmit.Value, solutionHistory);
@@ -350,7 +326,7 @@ namespace AoC
 
                             if (solutionResult.SolutionResponse != SolutionResponse.WaitToSubmit && solutionResult.SolutionResponse != SolutionResponse.Unrecognised && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
                             {
-                                solutionHistory.Add(new SubmittedSolution(solutionResult.Solution, solutionResult.SolutionResponse));
+                                solutionHistory.Add(new SubmittedSolution(partsToRun.ToString(), solutionResult.Solution, solutionResult.SolutionResponse));
                                 File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
                             }
                         }
