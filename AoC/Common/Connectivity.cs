@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -85,7 +83,31 @@ namespace AoC.Common
             return File.ReadAllText(Path.Combine("Data", year.ToString(), day.ToString(), "Input.txt")).Trim();
         }
 
-        private static async Task<string> PostSolutionRequest (int year, int day, int part, string solution)
+        private async static Task<string> DownloadPuzzlePage(int year, int day)
+        {
+            var downloadAttempts = 0;
+
+            while (downloadAttempts < 10)
+            {
+                var response = await Client.GetAsync(String.Format("https://adventofcode.com/{0}/day/{1}", year, day));
+                if (response.IsSuccessStatusCode)
+                {
+                    var puzzlePageResponse = await response.Content.ReadAsStringAsync();
+                    return puzzlePageResponse;
+                }
+                else
+                {
+                    Console.WriteLine("Request to get input data responded with status code: " + response.StatusCode.ToString());
+                    ++downloadAttempts;
+                    Thread.Sleep(500);
+                }
+            }
+
+            throw new InputGetRequestRetriesExceededException();
+        }
+        public static string FetchPuzzlePage(int year, int day) => DownloadPuzzlePage(year, day).GetAwaiter().GetResult();
+
+        private static async Task<string> PostSolutionRequest (int year, int day, int part, string solution, bool saveResponse)
         {
             var postContent = new FormUrlEncodedContent(
                 new Dictionary<string, string> {
@@ -102,18 +124,19 @@ namespace AoC.Common
 
                 var solutionResponse = htmlDoc.DocumentNode.InnerText.Trim();
 
-                if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
+                if (saveResponse)
+                {
+                    if (!Directory.Exists(Path.Combine("Data", year.ToString(), day.ToString()))) Directory.CreateDirectory(Path.Combine("Data", year.ToString(), day.ToString()));
 
-                var response_count = 0;
-                while (File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"))) ++response_count;
-                File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"), solutionResponse);
-
+                    var response_count = 0;
+                    while (File.Exists(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"))) ++response_count;
+                    File.WriteAllText(Path.Combine("Data", year.ToString(), day.ToString(), "response_" + response_count.ToString() + ".txt"), solutionResponse);
+                }
                 return solutionResponse;
             }
 
             return null;
         }
-
-        public static string SubmitSolution(int year, int day, int part, string solution) => PostSolutionRequest(year, day, part, solution).GetAwaiter().GetResult();
+        public static string SubmitSolution(int year, int day, int part, string solution) => PostSolutionRequest(year, day, part, solution, false).GetAwaiter().GetResult();
     }
 }

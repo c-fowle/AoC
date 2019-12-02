@@ -16,6 +16,7 @@ namespace AoC.Common
             return new Tuple<T, TimeSpan>(result, DateTime.Now - start);
         }
 
+        public IList<SubmittedSolution> SolutionHistory { get; }
         protected int Year { get; }
         protected int Day { get; }
         protected string Input { get; }
@@ -27,6 +28,8 @@ namespace AoC.Common
 
             if (yearAttribute is null) throw new Exception();
             if (dayAttribute is null) throw new Exception();
+
+            SolutionHistory = new List<SubmittedSolution>();
 
             Year = yearAttribute.YearValue;
             Day = dayAttribute.DayValue;

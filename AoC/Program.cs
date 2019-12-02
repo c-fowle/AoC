@@ -324,6 +324,45 @@ namespace AoC
                                     Console.WriteLine("submitted too soon...");
                                     Console.WriteLine("Wait another {0}m {1}s until submitting again", solutionResult.WaitTime?.Minutes, solutionResult.WaitTime?.Seconds);
                                     break;
+                                case SolutionResponse.AlreadySolved:
+                                    Console.WriteLine("ignored, the correct solution has already been submitted for this puzzle...");
+                                    Console.WriteLine("Attemping to fetch previous solution...");
+                                    Console.WriteLine();
+
+                                    var puzzlePageText = Connectivity.FetchPuzzlePage(selectedYear.Value, selectedDay.Value);
+                                    var answerParser = new Regex("Your puzzle answer was <code>(?<answer>.*?)<\\/code>", RegexOptions.Singleline);
+
+                                    var answerMatches = answerParser.Matches(puzzlePageText);
+
+                                    if (answerMatches.Count < partToRun) Console.WriteLine("The submitted solution for part {0} was ignored, but {1} answer{2} were found on the page...", partToRun, answerMatches.Count, answerMatches.Count == 1 ? "" : "s"); 
+
+                                    for (var matchCounter = 0; matchCounter < answerMatches.Count; ++matchCounter)
+                                    {
+                                        var thisMatch = answerMatches[matchCounter];
+
+                                        solutionHistory.Add(new SubmittedSolution(matchCounter + 1, thisMatch.Groups["answer"].Value, SolutionResponse.Correct));
+                                        if (partToRun == (matchCounter + 1))
+                                        {
+                                            Console.Write("By comparison with previous submission, this solution was ");
+                                            if (solutionResult.Solution == thisMatch.Groups["answer"].Value) Console.WriteLine("correct!");
+                                            else
+                                            {
+                                                var parsedSubmission = 0;
+                                                var parsedHistoric = 0;
+
+                                                if (int.TryParse(solutionResult.Solution, out parsedSubmission) && int.TryParse(thisMatch.Groups["answer"].Value, out parsedHistoric))
+                                                {
+                                                    if (parsedSubmission > parsedHistoric) Console.WriteLine("incorrect, the answer was too high...");
+                                                    else Console.WriteLine("incorrect, the answer was too low...");
+                                                }
+                                                else Console.WriteLine("incorrect...");
+                                            }
+                                        }
+                                    }
+
+                                    if (answerMatches.Count > 0) File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
+
+                                    break;
                                 case SolutionResponse.Unrecognised:
                                 default:
                                     Console.WriteLine("unknown - unable to parse response");
@@ -332,7 +371,9 @@ namespace AoC
                                     break;
                             }
 
-                            if (solutionResult.SolutionResponse != SolutionResponse.WaitToSubmit && solutionResult.SolutionResponse != SolutionResponse.Unrecognised && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
+                            var validResponses = new List<SolutionResponse> { SolutionResponse.Correct, SolutionResponse.IncorrectNoInformation, SolutionResponse.IncorrectTooHigh, SolutionResponse.IncorrectTooLow };
+
+                            if (validResponses.Any(valid => valid == solutionResult.SolutionResponse) && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
                             {
                                 solutionHistory.Add(new SubmittedSolution(partToRun, solutionResult.Solution, solutionResult.SolutionResponse));
                                 File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());

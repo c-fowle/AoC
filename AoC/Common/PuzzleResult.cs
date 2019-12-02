@@ -53,6 +53,11 @@ namespace AoC.Common
                 return SolutionResponse.WaitToSubmit;
             }
 
+            var alreadySolvedParser = new Regex("You don't seem to be solving the right level\\.  Did you already complete it\\?", RegexOptions.Singleline);
+            var alreadySolvedMatches = alreadySolvedParser.Matches(textResponse);
+
+            if (alreadySolvedMatches.Count == 1) return SolutionResponse.AlreadySolved;
+
             return SolutionResponse.Unrecognised;
         }
 
