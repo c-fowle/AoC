@@ -18,16 +18,21 @@ namespace AoC._2019.Classes
         }
         private void CreateOpcodes()
         {
+            // OPCODE 1 - ADDITION: x [p1, p2, p3] => set mem[p3] = mem[p1] + mem[p2]
             OpcodeDefinitions.Add(1, new Opcode(1, 3, new Func<int, int[], bool>((pointer, memory) =>
             {
                 memory[memory[pointer + 3]] = memory[memory[pointer + 1]] + memory[memory[pointer + 2]];
                 return false;
             })));
+
+            // OPCODE 2 - MULTIPLICATION: x [p1, p2, p3] => set mem[p3] = mem[p1] * mem[p2]
             OpcodeDefinitions.Add(2, new Opcode(2, 3, new Func<int, int[], bool>((pointer, memory) =>
             {
                 memory[memory[pointer + 3]] = memory[memory[pointer + 1]] * memory[memory[pointer + 2]];
                 return false;
             })));
+
+            // OPCODE 99 - EXIT CODE: Quits the program
             OpcodeDefinitions.Add(99, new Opcode(99, 0, new Func<int, int[], bool>((pointer, memory) => true)));
         }
         public IntcodeComputer CreateIntcodeComputer(int[] initialMemoryState, int[] allowedOperations=null)
