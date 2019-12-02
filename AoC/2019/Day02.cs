@@ -16,27 +16,19 @@ namespace AoC._2019
     [Day(2)]
     public class Day02 : Puzzle
     {
-        private int[] ParseInputToInt(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
-        private IntcodeComputer CreateIntcodeComputer(int[] initialMemoryState)
-        {
-            var opcodeAdd = new Opcode(1, 3, new Func<int, int[], bool>((pointer, memory) =>
-            {
-                memory[memory[pointer + 3]] = memory[memory[pointer + 1]] + memory[memory[pointer + 2]];
-                return false;
-            }));
-            var opcodeMultiply = new Opcode(2, 3, new Func<int, int[], bool>((pointer, memory) =>
-            {
-                memory[memory[pointer + 3]] = memory[memory[pointer + 1]] * memory[memory[pointer + 2]];
-                return false;
-            }));
-            var opcodeExit = new Opcode(99, 0, new Func<int, int[], bool>((pointer, memory) => true));
+        private IntcodeComputerFactory IntcodeComputerFactory { get; }
+        private int[] ParseInput(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
 
-            return new IntcodeComputer(new List<Opcode> { opcodeAdd, opcodeMultiply, opcodeExit }, initialMemoryState);
+        public Day02() : base()
+        {
+            IntcodeComputerFactory = new IntcodeComputerFactory();
         }
+
+        private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input), new int[] { 1, 2, 99 });
 
         protected override string Part1(string input)
         {
-            var finalState = CreateIntcodeComputer(ParseInputToInt(input)).RunProgram(new Action<int[]>(memory =>
+            var finalState = GetIntcodeComputer(input).RunProgram(new Action<int[]>(memory =>
             {
                 memory[1] = 12;
                 memory[2] = 2;
@@ -52,7 +44,7 @@ namespace AoC._2019
             var noun = 0;
             var verb = 0;
 
-            var computer = CreateIntcodeComputer(ParseInputToInt(input));
+            var computer = GetIntcodeComputer(input);
             var programInitialiser = new Action<int[]>(memory =>
             {
                 memory[1] = noun;
