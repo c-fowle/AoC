@@ -8,6 +8,8 @@ using AoC.Common;
 using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
+using AoC._2019.Classes;
+
 namespace AoC._2019
 {
     [Year(2019)]
