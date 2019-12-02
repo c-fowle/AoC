@@ -14,7 +14,7 @@ namespace AoC._2017.Day05
     [Year(2017)]
     [Day(5)]
     //[Test("0\n3\n0\n1\n-3", "5", "10")]
-    public class Year2017Day05 : Puzzle
+    public class Day05 : Puzzle
     {
         private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
 
@@ -47,7 +47,5 @@ namespace AoC._2017.Day05
 
             return moveCount.ToString();
         }
-
-        //=> throw new NotImplementedException("Part 2 not yet implemented...");
     }
 }

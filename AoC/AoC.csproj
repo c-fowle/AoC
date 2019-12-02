@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2017\Day05\Year2017Day05.cs" />
+    <Compile Include="2017\Day05.cs" />
     <Compile Include="2019\Day03.cs" />
     <Compile Include="2019\Day04.cs" />
     <Compile Include="2019\Day05.cs" />
