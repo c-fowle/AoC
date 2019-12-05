@@ -28,15 +28,15 @@ namespace AoC._2019
 
         protected override string Part1(string input)
         {
-            var finalState = GetIntcodeComputer(input).RunProgram(new Action<int[]>(memory =>
+            var result = GetIntcodeComputer(input).RunProgram(0, new Action<int[]>(memory =>
             {
                 memory[1] = 12;
                 memory[2] = 2;
             }));
 
-            if (finalState is null) throw new Exception("Intcode computer encountered an invalid operation code");
+            if (!result.ExecutionSucceeded) throw new Exception("Intcode computer encountered an invalid operation code");
 
-            return finalState[0].ToString();
+            return result.GetMemoryAddress(0).ToString();
         }
 
         protected override string Part2(string input)
@@ -53,8 +53,8 @@ namespace AoC._2019
 
             while (verb < 100)
             {
-                var finalState = computer.RunProgram(programInitialiser);
-                if (finalState != null && finalState[0] == 19690720) return ((noun * 100) + verb).ToString();
+                var result = computer.RunProgram(0, programInitialiser);
+                if (result.ExecutionSucceeded && result.GetMemoryAddress(0) == 19690720) return ((noun * 100) + verb).ToString();
 
                 if (++noun >= 100)
                 {

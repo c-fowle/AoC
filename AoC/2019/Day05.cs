@@ -14,22 +14,17 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(5)]
-    [Test("input",null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
     public class Day05 : Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
-
-        protected override string Part1(string input)
+        private IntcodeComputerFactory IntcodeComputerFactory { get; }
+        private int[] ParseInput(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
+        public Day05() : base()
         {
-            throw new NotImplementedException();
+            IntcodeComputerFactory = new IntcodeComputerFactory();
         }
 
-        protected override string Part2(string input)
-        {
-            throw new NotImplementedException();
-        }
+        private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input));
+        protected override string Part1(string input) => GetIntcodeComputer(input).RunProgram(1, new Action<int[]>(memory => { return; })).LastOutput?.ToString();
+        protected override string Part2(string input) => GetIntcodeComputer(input).RunProgram(5, new Action<int[]>(memory => { return; })).LastOutput?.ToString();
     }
 }

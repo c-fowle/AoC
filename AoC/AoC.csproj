@@ -52,6 +52,10 @@
   <ItemGroup>
     <Compile Include="2017\Day05.cs" />
     <Compile Include="2019\Classes\IntcodeComputerFactory.cs" />
+    <Compile Include="2019\Classes\IntcodeProgramResult.cs" />
+    <Compile Include="2019\Classes\OperationInput.cs" />
+    <Compile Include="2019\Exceptions\InvalidParameterModeError.cs" />
+    <Compile Include="2019\Classes\OperationResult.cs" />
     <Compile Include="2019\Day03.cs" />
     <Compile Include="2019\Day04.cs" />
     <Compile Include="2019\Day05.cs" />
