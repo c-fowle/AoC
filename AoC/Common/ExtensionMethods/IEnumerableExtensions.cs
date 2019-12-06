@@ -19,5 +19,12 @@ namespace AoC.Common.ExtensionMethods
             foreach (var i in list) result.Add(function(i));
             return result;
         }
+
+        public static IList<T> CloneAsList<T>(this IEnumerable<T> list)
+        {
+            var copy = new List<T>();
+            list.ForEach(copy.Add);
+            return copy;
+        }
     }
 }
