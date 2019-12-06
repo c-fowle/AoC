@@ -38,17 +38,18 @@ namespace AoC._2019.Classes
             return digits;
         }
 
-        public IntcodeProgramResult RunProgram(int input, Action<int[]> initialisation)
+        public IntcodeProgramResult RunProgram(IntcodeProgramInput programInput)
         {
             var outputs = new List<int>();
             var currentMemory = new int[InitialMemory.Length];
             InitialMemory.CopyTo(currentMemory, 0);
-            initialisation(currentMemory);
+            programInput.MemoryInitialisation(currentMemory);
 
             var instructionPointer = 0;
 
             var exited = false;
             var errorEncountered = false;
+            var inputPosition = 0;
 
             while (!exited)
             {
@@ -64,7 +65,8 @@ namespace AoC._2019.Classes
                 {
                     try
                     {
-                        var operationResult = matchedOperations.Single().RunOperation(instructionPointer, currentMemory, input);
+                        var operationResult = matchedOperations.Single().RunOperation(instructionPointer, currentMemory, programInput.Inputs[inputPosition]);
+                        inputPosition = (++inputPosition) % programInput.Inputs.Length;
                         exited = operationResult.Exit;
                         if (operationResult.Output.HasValue) outputs.Add(operationResult.Output.Value);
                         if (operationResult.JumpTo.HasValue) instructionPointer = operationResult.JumpTo.Value;
