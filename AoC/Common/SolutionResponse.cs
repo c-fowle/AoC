@@ -9,6 +9,7 @@
         IncorrectTooHigh = 4,
         Correct = 5,
         WaitToSubmit = 6,
-        AlreadySolved = 7
+        AlreadySolved = 7,
+        NotSubmitted = 8
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace AoC._2019.Exceptions
+﻿namespace AoC._2019.Exceptions
 {
-    public class InvalidParameterModeError : Exception
+    public class InvalidParameterModeError : IntcodeOperationException
     {
         public InvalidParameterModeError() : base("Unrecognised parameter mode...")
         { }

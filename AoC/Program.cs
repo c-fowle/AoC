@@ -363,6 +363,9 @@ namespace AoC
                                     if (answerMatches.Count > 0) File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
 
                                     break;
+                                case SolutionResponse.NotSubmitted:
+                                    Console.WriteLine("was not submitted...");
+                                    break;
                                 case SolutionResponse.Unrecognised:
                                 default:
                                     Console.WriteLine("unknown - unable to parse response");

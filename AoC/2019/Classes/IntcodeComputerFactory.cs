@@ -35,7 +35,7 @@ namespace AoC._2019.Classes
             // OPCODE 3 - INPUT TO ADDRESS: x [p1] => set mem[p1] = I
             OpcodeDefinitions.Add(3, new Opcode(3, 1, 0, new Func<OperationInput, int[], OperationResult>((input, memory) =>
             {
-                memory[input.Parameters[0]] = input.Input;
+                memory[input.Parameters[0]] = input.GetInput();
                 return new OperationResult();
             })));
 

@@ -24,7 +24,7 @@ namespace AoC._2019
         }
 
         private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input));
-        protected override string Part1(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 1 })).LastOutput?.ToString();
-        protected override string Part2(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 5 })).LastOutput?.ToString();
+        protected override string Part1(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 1 })).GetAwaiter().GetResult().LastOutput?.ToString();
+        protected override string Part2(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 5 })).GetAwaiter().GetResult().LastOutput?.ToString();
     }
 }

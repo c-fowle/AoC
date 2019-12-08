@@ -55,6 +55,9 @@
     <Compile Include="2019\Classes\IntcodeProgramInput.cs" />
     <Compile Include="2019\Classes\IntcodeProgramResult.cs" />
     <Compile Include="2019\Classes\OperationInput.cs" />
+    <Compile Include="2019\Exceptions\InterruptedWhileAwaitingInputError.cs" />
+    <Compile Include="2019\Exceptions\IntcodeOperationException.cs" />
+    <Compile Include="2019\Exceptions\InterruptedWhileAwaitingOutputError.cs" />
     <Compile Include="2019\Exceptions\InvalidParameterModeError.cs" />
     <Compile Include="2019\Classes\OperationResult.cs" />
     <Compile Include="2019\Day03.cs" />

@@ -1,13 +1,15 @@
-﻿namespace AoC._2019.Classes
+﻿using System;
+
+namespace AoC._2019.Classes
 {
     public class OperationInput
     {
-        public int Input { get; }
+        public Func<int> GetInput { get; }
         public int[] Parameters { get; }
 
-        public OperationInput(int input, params int[] parameters)
+        public OperationInput(Func<int> getInput, params int[] parameters)
         {
-            Input = input;
+            GetInput = getInput;
             Parameters = parameters;
         }
     }

@@ -66,7 +66,7 @@ namespace AoC.Common
             Solution = solution;
             ExecutionTime = executionTime;
             FullTextResponse = fullTextResponse;
-            SolutionResponse = GetSolutionResponseFromText(FullTextResponse);
+            SolutionResponse = FullTextResponse == null ? SolutionResponse.NotSubmitted : GetSolutionResponseFromText(FullTextResponse);
             RepeatedSubmission = false;
             ComparedWithCached = false;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using AoC._2019.Exceptions;
 
@@ -19,7 +20,7 @@ namespace AoC._2019.Classes
             Operation = operation;
         }
 
-        public OperationResult RunOperation(int pointer, int[] memory, int input)
+        public async Task<OperationResult> RunOperation(int pointer, int[] memory, Func<int> getInput)
         {
             var parameters = new int[ParameterCount];
 
@@ -43,7 +44,7 @@ namespace AoC._2019.Classes
                 }
             }
 
-            return Operation(new OperationInput(input, parameters), memory);
+            return await Task.Run(() => Operation(new OperationInput(getInput, parameters), memory));
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using AoC.Common;
@@ -32,7 +33,7 @@ namespace AoC._2019
             {
                 memory[1] = 12;
                 memory[2] = 2;
-            })));
+            }))).GetAwaiter().GetResult();
 
             if (!result.ExecutionSucceeded) throw new Exception("Intcode computer encountered an invalid operation code");
 
@@ -43,19 +44,26 @@ namespace AoC._2019
         {      
             var noun = 0;
             var verb = 0;
+            var solution = default(string);
 
-            var computer = GetIntcodeComputer(input);
             var programInitialiser = new Action<int[]>(memory =>
             {
                 memory[1] = noun;
                 memory[2] = verb;
             });
             var programInput = new IntcodeProgramInput(memoryInitialisation: programInitialiser);
+            var allComputers = new Dictionary<string, IntcodeComputer>();
 
-            while (verb < 100)
+            while(verb < 100)
             {
-                var result = computer.RunProgram(programInput);
-                if (result.ExecutionSucceeded && result.GetMemoryAddress(0) == 19690720) return ((noun * 100) + verb).ToString();
+                var thisKey = ((noun * 100) + verb).ToString();
+                allComputers = allComputers.Where(kvp => !kvp.Value.Exited || (kvp.Value.Exited && kvp.Value.CurrentMemory[0] == 19690720)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                allComputers.Add(thisKey, GetIntcodeComputer(input));
+
+                var programTask = allComputers[thisKey].RunProgram(programInput);
+                var completed = allComputers.Where(kvp => kvp.Value.Exited && kvp.Value.CurrentMemory[0] == 19690720);
+
+                if (completed.Count() > 0) return completed.First().Key;
 
                 if (++noun >= 100)
                 {
@@ -64,7 +72,19 @@ namespace AoC._2019
                 }
             }
 
+            do
+            {
+                allComputers.ForEach(kvp =>
+                {
+                    if (solution == null && kvp.Value.Exited && kvp.Value.CurrentMemory[0] == 19690720) solution = kvp.Key;
+                });
+
+                if (solution != null) return solution;
+
+            } while (!allComputers.All(kvp => kvp.Value.Exited));
+
             throw new Exception("Executed for all valid 'noun' and 'verb' values but no solution was found");
         }
     }
 }
+ 
