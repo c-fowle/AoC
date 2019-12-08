@@ -38,29 +38,6 @@ namespace AoC._2019.Classes
             Outputs = new Queue<int>();
             OutputLock = new object();
         }
-        private int[] GetDigits(int number)
-        {
-            var digitCount = 1;
-
-            while (number > Math.Pow(10, digitCount)) ++digitCount;
-
-            var digits = new int[digitCount];
-
-            for (var d = (digitCount - 1); d > -1; --d)
-            {
-                var thisDigit = (int)Math.Floor((double)number / (Math.Pow(10, d)));
-                digits[digitCount - (d + 1)] = thisDigit;
-                number = (int)(number - (thisDigit * (Math.Pow(10, d))));
-            }
-
-            return digits;
-        }
-
-        public void ForceStop()
-        {
-            Exited = true;
-            Errored = true;
-        }
 
         private int GetNextInput()
         {
@@ -162,7 +139,14 @@ namespace AoC._2019.Classes
             var finalMemState = new int[InitialMemory.Length];
             CurrentMemory.CopyTo(finalMemState, 0);
 
-            return new IntcodeProgramResult(!Errored, finalMemState, Outputs.CloneAsList().ToList());
+            List<int> finalOutputs;
+
+            lock(OutputLock)
+            {
+                finalOutputs = Outputs.CloneAsList().ToList();
+            }
+
+            return new IntcodeProgramResult(!Errored, finalMemState, finalOutputs);
         }
     }
 }

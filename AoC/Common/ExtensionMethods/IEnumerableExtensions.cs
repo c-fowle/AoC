@@ -26,5 +26,30 @@ namespace AoC.Common.ExtensionMethods
             list.ForEach(copy.Add);
             return copy;
         }
+
+        public static IList<List<int>> GetPermutations(this IEnumerable<int> list)
+        {
+            if (list.Count() == 1) return new List<List<int>>() { new List<int>() { list.Single() } };
+
+            var permutations = new List<List<int>>();
+
+            for (var pos = 0; pos < list.Count(); ++pos)
+            {
+                var listCopy = list.CloneAsList().ToList();
+                var initial = listCopy[pos];
+                listCopy.RemoveAt(pos);
+
+                var sublistPermutations = GetPermutations(listCopy);
+
+                sublistPermutations.ForEach(l =>
+                {
+                    l.Insert(0, initial);
+                    permutations.Add(l.CloneAsList().ToList());
+                });
+            }
+
+            return permutations;
+        }
+
     }
 }

@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2017\Day05.cs" />
+    <Compile Include="2019\Classes\AmplifierArray.cs" />
     <Compile Include="2019\Classes\IntcodeComputerFactory.cs" />
     <Compile Include="2019\Classes\IntcodeProgramInput.cs" />
     <Compile Include="2019\Classes\IntcodeProgramResult.cs" />

@@ -12,6 +12,7 @@ using AoC._2019.Classes;
 
 namespace AoC._2019
 {
+
     [Year(2019)]
     [Day(7)]
     [Test("3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0", "43210", null)]
@@ -31,106 +32,18 @@ namespace AoC._2019
 
         private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input));
 
-        private List<List<int>> GetPermutations(List<int> list)
+        private int GetMaximumOutput(string input, List<int> availablePhases)
         {
-            if (list.Count == 1) return new List<List<int>>() { new List<int>() { list.Single() } };
+            var parsedInput = ParseInput(input);
+            var amplifierArrays = new List<AmplifierArray>();
 
-            var permutations = new List<List<int>>();
+            availablePhases.GetPermutations().ForEach(seq => amplifierArrays.Add(new AmplifierArray(IntcodeComputerFactory, parsedInput, seq)));
 
-            for (var pos = 0; pos < list.Count; ++pos)
-            {
-                var listCopy = list.CloneAsList().ToList();
-                var initial = listCopy[pos];
-                listCopy.RemoveAt(pos);
-
-                var sublistPermutations = GetPermutations(listCopy);
-
-                sublistPermutations.ForEach(l =>
-                {
-                    l.Insert(0, initial);
-                    permutations.Add(l.CloneAsList().ToList());
-                });
-            }
-
-            return permutations;
+            return amplifierArrays.Select(aa => aa.RunProgram()).Select(t => t.Result).OrderByDescending(i => i).First();
         }
 
-        protected override string Part1(string input)
-        {
-            var intcodeComputer = GetIntcodeComputer(input);
-            var possibleSequences = GetPermutations(new List<int>() { 0, 1, 2, 3, 4 });
-
-            var maxThrust = 0;
-
-            possibleSequences.ForEach(seq =>
-            {
-                var programInput = 0;
-                var errorEncountered = false;
-
-                seq.ForEach(phaseSet =>
-                {
-                    if (errorEncountered) return;
-
-                    var programResult = intcodeComputer.RunProgram(new IntcodeProgramInput(inputs: new int[] { phaseSet, programInput })).GetAwaiter().GetResult();
-
-                    if (!programResult.ExecutionSucceeded || !programResult.LastOutput.HasValue) errorEncountered = true;
-                    else programInput = programResult.LastOutput.Value;
-                });
-
-                if (!errorEncountered && programInput > maxThrust) maxThrust = programInput;
-            });
-
-            return maxThrust.ToString();
-        }
-
-        protected override string Part2(string input)
-        {
-            var intcodeComputer = GetIntcodeComputer(input);
-            var possibleSequences = GetPermutations(new List<int>() { 5, 6, 7, 8, 9 });
-
-            var maxThrust = 0;
-
-            for (var seqCount = 0; seqCount < possibleSequences.Count; ++seqCount)
-            {
-                var seq = possibleSequences[seqCount];
-
-                var amplifiers = new List<IntcodeComputer>
-                {
-                    GetIntcodeComputer(input),
-                    GetIntcodeComputer(input),
-                    GetIntcodeComputer(input),
-                    GetIntcodeComputer(input),
-                    GetIntcodeComputer(input)
-                };
-
-                for (var ampCount = 0; ampCount < amplifiers.Count; ++ampCount) amplifiers[ampCount].RunProgram(new IntcodeProgramInput(inputs: new[] { seq[ampCount] }));
-
-                amplifiers[0].AddInput(0);
-
-                while (!amplifiers.Last().Exited && !amplifiers.Any(amp => amp.Errored))
-                {
-                    for (var ampCount = 0; ampCount < amplifiers.Count; ++ampCount)
-                    {
-                        if (amplifiers[ampCount].OutputReady())
-                        {
-                            if (ampCount == amplifiers.Count - 1 && amplifiers[ampCount].Exited) break;
-                            amplifiers[(ampCount + 1) % amplifiers.Count].AddInput(amplifiers[ampCount].GetLastOutput().Value);
-                        }
-                    }
-                }
-
-                if (!amplifiers.Last().Errored)
-                {
-                    var finalOutput = 0;
-                    while (amplifiers.Last().OutputReady()) finalOutput = amplifiers.Last().GetLastOutput().Value;
-
-                    if (finalOutput > maxThrust) maxThrust = finalOutput;
-                }
-
-                amplifiers.ForEach(amp => amp.ForceStop());
-            }
-
-            return maxThrust.ToString();
-        }
+        protected override string Part1(string input) => GetMaximumOutput(input, new List<int>() { 0, 1, 2, 3, 4 }).ToString();
+        protected override string Part2(string input) => GetMaximumOutput(input, new List<int>() { 5, 6, 7, 8, 9 }).ToString();
     }
 }
+
