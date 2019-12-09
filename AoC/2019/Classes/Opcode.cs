@@ -10,9 +10,9 @@ namespace AoC._2019.Classes
         public int Code { get; }
         public int ParameterCount { get; }
         private int? WriteAddressParameter { get; }
-        private Func<OperationInput, int[], OperationResult> Operation { get; }
+        private Func<OperationInput, long[], OperationResult> Operation { get; }
 
-        public Opcode(int code, int parameterCount, int? writeAddressParameter, Func<OperationInput, int[], OperationResult> operation)
+        public Opcode(int code, int parameterCount, int? writeAddressParameter, Func<OperationInput, long[], OperationResult> operation)
         {
             Code = code;
             ParameterCount = parameterCount;
@@ -20,24 +20,27 @@ namespace AoC._2019.Classes
             Operation = operation;
         }
 
-        public async Task<OperationResult> RunOperation(int pointer, int[] memory, Func<int> getInput)
+        public async Task<OperationResult> RunOperation(ulong pointer, long[] memory, long relativeBase, Func<long> getInput)
         {
-            var parameters = new int[ParameterCount];
+            var parameters = new long[ParameterCount];
 
             for(var i = 0; i < ParameterCount; ++i)
             {
                 var trimedInstruction = (decimal)Math.Floor(memory[pointer] / Math.Pow(10, i + 2));
                 var parameterMode = (int)(((trimedInstruction / (decimal)10) - Math.Floor(trimedInstruction / (decimal)10)) * (decimal)10);
 
-                if (WriteAddressParameter.HasValue && i == WriteAddressParameter) parameterMode = 1;
-
                 switch(parameterMode)
                 {
                     case 0:
-                        parameters[i] = memory[memory[pointer + (i + 1)]];
+                        if (WriteAddressParameter.HasValue && i == WriteAddressParameter) parameters[i] = memory[pointer + (ulong)(i + 1)];
+                        else parameters[i] = memory[memory[pointer + (ulong)(i + 1)]];
                         break;
                     case 1:
-                        parameters[i] = memory[pointer + (i + 1)];
+                        parameters[i] = memory[pointer + (ulong)(i + 1)];
+                        break;
+                    case 2:
+                        if (WriteAddressParameter.HasValue && i == WriteAddressParameter) parameters[i] = memory[pointer + (ulong)(i + 1)] + relativeBase;
+                        else parameters[i] = memory[memory[pointer + (ulong)(i + 1)] + relativeBase];
                         break;
                     default:
                         throw new InvalidParameterModeError();

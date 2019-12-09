@@ -27,11 +27,11 @@ namespace AoC.Common.ExtensionMethods
             return copy;
         }
 
-        public static IList<List<int>> GetPermutations(this IEnumerable<int> list)
+        public static IList<List<T>> GetPermutations<T>(this IEnumerable<T> list)
         {
-            if (list.Count() == 1) return new List<List<int>>() { new List<int>() { list.Single() } };
+            if (list.Count() == 1) return new List<List<T>>() { new List<T>() { list.Single() } };
 
-            var permutations = new List<List<int>>();
+            var permutations = new List<List<T>>();
 
             for (var pos = 0; pos < list.Count(); ++pos)
             {

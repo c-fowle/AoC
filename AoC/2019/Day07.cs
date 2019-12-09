@@ -28,11 +28,11 @@ namespace AoC._2019
             IntcodeComputerFactory = new IntcodeComputerFactory();
         }
 
-        private int[] ParseInput(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
+        private long[] ParseInput(string input) => input.Split(',').ForEach(s => long.Parse(s)).ToArray();
 
         private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input));
 
-        private int GetMaximumOutput(string input, List<int> availablePhases)
+        private long GetMaximumOutput(string input, List<long> availablePhases)
         {
             var parsedInput = ParseInput(input);
             var amplifierArrays = new List<AmplifierArray>();
@@ -42,8 +42,8 @@ namespace AoC._2019
             return amplifierArrays.Select(aa => aa.RunProgram()).Select(t => t.Result).OrderByDescending(i => i).First();
         }
 
-        protected override string Part1(string input) => GetMaximumOutput(input, new List<int>() { 0, 1, 2, 3, 4 }).ToString();
-        protected override string Part2(string input) => GetMaximumOutput(input, new List<int>() { 5, 6, 7, 8, 9 }).ToString();
+        protected override string Part1(string input) => GetMaximumOutput(input, new List<long>() { 0, 1, 2, 3, 4 }).ToString();
+        protected override string Part2(string input) => GetMaximumOutput(input, new List<long>() { 5, 6, 7, 8, 9 }).ToString();
     }
 }
 

@@ -12,34 +12,35 @@ namespace AoC._2019.Classes
     public class IntcodeComputer
     {
         protected IList<Opcode> AvailableOperations { get; }
-        private int[] InitialMemory { get; }
+        private long[] InitialMemory { get; }
 
-        private int InstructionPointer { get; set; }
-        public int[] CurrentMemory { get; private set; }
-        private Queue<int> Inputs { get; }
+        private ulong InstructionPointer { get; set; }
+        private long RelativeBase { get; set; }
+        public long[] CurrentMemory { get; private set; }
+        private Queue<long> Inputs { get; }
         private object InputLock { get; }
-        private Queue<int> Outputs { get; }
+        private Queue<long> Outputs { get; }
         private object OutputLock { get; }
         public bool Exited { get; private set; }
         public bool Errored { get; private set; }
         public bool Paused { get; private set; }
 
-        public IntcodeComputer(IList<Opcode> availableOperations, int[] initialMemoryState)
+        public IntcodeComputer(IList<Opcode> availableOperations, long[] initialMemoryState)
         {
             AvailableOperations = new List<Opcode>();
             availableOperations.ForEach(AvailableOperations.Add);
 
-            InitialMemory = new int[initialMemoryState.Length];
+            InitialMemory = new long[initialMemoryState.Length];
             initialMemoryState.CopyTo(InitialMemory, 0);
 
-            Inputs = new Queue<int>();
+            Inputs = new Queue<long>();
             InputLock = new object();
 
-            Outputs = new Queue<int>();
+            Outputs = new Queue<long>();
             OutputLock = new object();
         }
 
-        private int GetNextInput()
+        private long GetNextInput()
         {
             while (!Exited)
             {
@@ -58,7 +59,7 @@ namespace AoC._2019.Classes
             throw new InterruptedWhileAwaitingInputError();
         }
 
-        public void AddInput(int input)
+        public void AddInput(long input)
         {
             lock (InputLock)
             {
@@ -75,7 +76,7 @@ namespace AoC._2019.Classes
             }
             return ready;
         }
-        public int? GetLastOutput()
+        public long? GetLastOutput()
         {
             lock (OutputLock)
             {
@@ -84,7 +85,7 @@ namespace AoC._2019.Classes
             return null;
         }
 
-        private void AddOutput(int output)
+        private void AddOutput(long output)
         {
             lock(OutputLock)
             {
@@ -94,11 +95,12 @@ namespace AoC._2019.Classes
 
         public async Task<IntcodeProgramResult> RunProgram(IntcodeProgramInput programInput)
         {
-            CurrentMemory = new int[InitialMemory.Length];
+            CurrentMemory = new long[InitialMemory.Length * 100];
             InitialMemory.CopyTo(CurrentMemory, 0);
             programInput.MemoryInitialisation(CurrentMemory);
             
             InstructionPointer = 0;
+            RelativeBase = 0;
 
             Exited = false;
             Errored = false;
@@ -121,11 +123,12 @@ namespace AoC._2019.Classes
                 {
                     try
                     {
-                        var operationResult = await matchedOperations.Single().RunOperation(InstructionPointer, CurrentMemory, GetNextInput);
+                        var operationResult = await matchedOperations.Single().RunOperation(InstructionPointer, CurrentMemory, RelativeBase, GetNextInput);
                         Exited |= operationResult.Exit;
                         if (operationResult.Output.HasValue) AddOutput(operationResult.Output.Value);
                         if (operationResult.JumpTo.HasValue) InstructionPointer = operationResult.JumpTo.Value;
-                        else InstructionPointer += (1 + matchedOperations.Single().ParameterCount);
+                        else InstructionPointer += (1 + (ulong)matchedOperations.Single().ParameterCount);
+                        if (operationResult.AdjustRelativeBase.HasValue) RelativeBase = RelativeBase + operationResult.AdjustRelativeBase.Value;
                     }
                     catch (IntcodeOperationException ex)
                     {
@@ -136,10 +139,10 @@ namespace AoC._2019.Classes
                 else throw new Exception("Multiple operation definitions for operation code: " + CurrentMemory[InstructionPointer]);
             }
 
-            var finalMemState = new int[InitialMemory.Length];
+            var finalMemState = new long[InitialMemory.Length * 100];
             CurrentMemory.CopyTo(finalMemState, 0);
 
-            List<int> finalOutputs;
+            List<long> finalOutputs;
 
             lock(OutputLock)
             {

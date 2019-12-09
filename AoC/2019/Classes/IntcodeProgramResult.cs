@@ -6,26 +6,26 @@ namespace AoC._2019.Classes
     public class IntcodeProgramResult
     {
         public bool ExecutionSucceeded { get; }
-        private int[] FinalMemoryState { get; }
-        private IList<int> Outputs { get; }
-        public IntcodeProgramResult(bool success, int[] finalMemoryState, List<int> outputs)
+        private long[] FinalMemoryState { get; }
+        private IList<long> Outputs { get; }
+        public IntcodeProgramResult(bool success, long[] finalMemoryState, List<long> outputs)
         {
             ExecutionSucceeded = success;
 
-            FinalMemoryState = new int[finalMemoryState.Length];
+            FinalMemoryState = new long[finalMemoryState.Length];
             finalMemoryState.CopyTo(FinalMemoryState, 0);
 
-            Outputs = new List<int>();
+            Outputs = new List<long>();
             outputs.ForEach(Outputs.Add);
         }
 
-        public int GetMemoryAddress(int address) => FinalMemoryState[address];
-        public IList<int> GetOutputs()
+        public long GetMemoryAddress(ulong address) => FinalMemoryState[address];
+        public IList<long> GetOutputs()
         {
-            var outputCopy = new List<int>();
+            var outputCopy = new List<long>();
             Outputs.ForEach(outputCopy.Add);
             return outputCopy;
         }
-        public int? LastOutput => Outputs.Count > 0 ? (int?)Outputs[Outputs.Count - 1] : null;
+        public long? LastOutput => Outputs.Count > 0 ? (long?)Outputs[Outputs.Count - 1] : null;
     }
 }

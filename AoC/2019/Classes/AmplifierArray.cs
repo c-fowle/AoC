@@ -8,10 +8,10 @@ namespace AoC._2019.Classes
     public class AmplifierArray
     {
         private List<IntcodeComputer> Amplifiers { get; }
-        private List<int> Phases { get; }
+        private List<long> Phases { get; }
         private bool Completed { get; set; }
-        private int ProgramOutput { get; set; }
-        public AmplifierArray(IntcodeComputerFactory intcodeComputerFactory, int[] initialMemory, List<int> phases)
+        private long ProgramOutput { get; set; }
+        public AmplifierArray(IntcodeComputerFactory intcodeComputerFactory, long[] initialMemory, List<long> phases)
         {
             Amplifiers = new List<IntcodeComputer>();
             phases.ForEach(phase => Amplifiers.Add(intcodeComputerFactory.CreateIntcodeComputer(initialMemory)));
@@ -19,7 +19,7 @@ namespace AoC._2019.Classes
             Phases = phases.CloneAsList().ToList();
         }
 
-        public async Task<int> RunProgram()
+        public async Task<long> RunProgram()
         {
             if (Completed) return ProgramOutput;
 

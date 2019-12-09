@@ -14,22 +14,19 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(9)]
-    [Test("input",null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
+    [Test("109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99", "99", null)]
+    [Test("104,1125899906842624,99", "1125899906842624", null)]
     public class Day09 : Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
-
-        protected override string Part1(string input)
+        private IntcodeComputerFactory IntcodeComputerFactory { get; }
+        public Day09() : base()
         {
-            throw new NotImplementedException();
+            IntcodeComputerFactory = new IntcodeComputerFactory();
         }
+        private long[] ParseInput(string input) => input.Split(',').ForEach(s => long.Parse(s)).ToArray();
 
-        protected override string Part2(string input)
-        {
-            throw new NotImplementedException();
-        }
+        protected override string Part1(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input)).RunProgram(new IntcodeProgramInput(inputs: new[] { 1L })).GetAwaiter().GetResult().LastOutput?.ToString();
+
+        protected override string Part2(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input)).RunProgram(new IntcodeProgramInput(inputs: new[] { 2L })).GetAwaiter().GetResult().LastOutput?.ToString();
     }
 }

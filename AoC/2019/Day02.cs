@@ -18,7 +18,7 @@ namespace AoC._2019
     public class Day02 : Puzzle
     {
         private IntcodeComputerFactory IntcodeComputerFactory { get; }
-        private int[] ParseInput(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
+        private long[] ParseInput(string input) => input.Split(',').ForEach(s => long.Parse(s)).ToArray();
 
         public Day02() : base()
         {
@@ -29,7 +29,7 @@ namespace AoC._2019
 
         protected override string Part1(string input)
         {
-            var result = GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(new Action<int[]>(memory =>
+            var result = GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(new Action<long[]>(memory =>
             {
                 memory[1] = 12;
                 memory[2] = 2;
@@ -46,7 +46,7 @@ namespace AoC._2019
             var verb = 0;
             var solution = default(string);
 
-            var programInitialiser = new Action<int[]>(memory =>
+            var programInitialiser = new Action<long[]>(memory =>
             {
                 memory[1] = noun;
                 memory[2] = verb;

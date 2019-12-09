@@ -17,14 +17,14 @@ namespace AoC._2019
     public class Day05 : Puzzle
     {
         private IntcodeComputerFactory IntcodeComputerFactory { get; }
-        private int[] ParseInput(string input) => input.Split(',').ForEach(s => int.Parse(s)).ToArray();
+        private long[] ParseInput(string input) => input.Split(',').ForEach(s => long.Parse(s)).ToArray();
         public Day05() : base()
         {
             IntcodeComputerFactory = new IntcodeComputerFactory();
         }
 
         private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input));
-        protected override string Part1(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 1 })).GetAwaiter().GetResult().LastOutput?.ToString();
-        protected override string Part2(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 5 })).GetAwaiter().GetResult().LastOutput?.ToString();
+        protected override string Part1(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 1L })).GetAwaiter().GetResult().LastOutput?.ToString();
+        protected override string Part2(string input) => GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(inputs: new[] { 5L })).GetAwaiter().GetResult().LastOutput?.ToString();
     }
 }
