@@ -109,7 +109,7 @@ namespace AoC
                 return;
             }
 
-            var implementationCount = puzzleImplementationTypesDictionary.ForEach(kvp => kvp.Value.Count).Sum();
+            var implementationCount = puzzleImplementationTypesDictionary.Select(kvp => kvp.Value.Count).Sum();
             Console.WriteLine("Found {0} puzzle implementation{1}", implementationCount, implementationCount == 1 ? "" : "s");
 
             var currentDayEST = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.CreateCustomTimeZone("EST", new TimeSpan(-5, 0, 0), "EST", "EST"));
@@ -245,7 +245,7 @@ namespace AoC
                 var puzzleToRun = Activator.CreateInstance(puzzleImplementationTypesDictionary[selectedYear.Value][selectedDay.Value]) as Puzzle;
                 partsToRun.Sort();
 
-                Console.WriteLine("Running solution for {0}/12/{1} part{2} {3} - solution will{4} be submitted on completion", selectedYear, selectedDay, partsToRun.Count == 1 ? "": "s", string.Join(" & ", partsToRun.ForEach<int, string>(i => i.ToString())), autoSubmit.Value ? "" : " not");
+                Console.WriteLine("Running solution for {0}/12/{1} part{2} {3} - solution will{4} be submitted on completion", selectedYear, selectedDay, partsToRun.Count == 1 ? "": "s", string.Join(" & ", partsToRun.Select(i => i.ToString())), autoSubmit.Value ? "" : " not");
 
                 foreach (var partToRun in partsToRun.OrderBy(i => i))
                 {
@@ -276,7 +276,7 @@ namespace AoC
                         if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
                         if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.Create(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).Close();
 
-                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).ForEach<string, SubmittedSolution>(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partToRun).ToList();
+                        var solutionHistory = File.ReadAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).Select(s => new SubmittedSolution(s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))).Where(ss => ss.Part == partToRun).ToList();
 
                         Console.WriteLine("All tests passed, continuing with solution...");
                         var solutionResult = puzzleToRun.Solve(partToRun, autoSubmit.Value, solutionHistory);
@@ -360,7 +360,7 @@ namespace AoC
                                         }
                                     }
 
-                                    if (answerMatches.Count > 0) File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
+                                    if (answerMatches.Count > 0) File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.Select(ss => ss.ToString()).ToList());
 
                                     break;
                                 case SolutionResponse.NotSubmitted:
@@ -379,7 +379,7 @@ namespace AoC
                             if (validResponses.Any(valid => valid == solutionResult.SolutionResponse) && solutionHistory.All(ss => ss.Response != SolutionResponse.Correct) && solutionHistory.All(ss => ss.Solution != solutionResult.Solution))
                             {
                                 solutionHistory.Add(new SubmittedSolution(partToRun, solutionResult.Solution, solutionResult.SolutionResponse));
-                                File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.ForEach<SubmittedSolution, string>(ss => ss.ToString()).ToList());
+                                File.WriteAllLines(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"), solutionHistory.Select(ss => ss.ToString()).ToList());
                             }
                         }
                     }

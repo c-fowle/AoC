@@ -9,15 +9,16 @@ using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
     [Year(2019)]
     [Day(8)]
     //[Test("123456789012", "1", null)]
-    public class Day08 : Puzzle
+    public class Day08 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.ForEach(s => int.Parse(s.ToString())).ToArray();
+        private int[] ParseInput(string input) => input.Select(s => int.Parse(s.ToString())).ToArray();
 
         protected override string Part1(string input)
         {

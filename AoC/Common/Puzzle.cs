@@ -51,7 +51,7 @@ namespace AoC.Common
             Func<string, string> partFunction = GetPartFunction(part);
             if (partFunction == null) return null;
 
-            return GetType().GetCustomAttributes<TestAttribute>().ForEach(testAttribute =>
+            return GetType().GetCustomAttributes<TestAttribute>().Select(testAttribute =>
             {
                 if (testAttribute.GetResultForPart(part) == null) return null;
 

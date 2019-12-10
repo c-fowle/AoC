@@ -88,6 +88,8 @@
     <Compile Include="2019\Day01.cs" />
     <Compile Include="2019\Classes\IntcodeComputer.cs" />
     <Compile Include="2019\Classes\Opcode.cs" />
+    <Compile Include="2019\Enums\Quadrant.cs" />
+    <Compile Include="2019\_2019Puzzle.cs" />
     <Compile Include="Common\Attributes\TestAttribute.cs" />
     <Compile Include="Common\Connectivity.cs" />
     <Compile Include="Common\Attributes\DayAttribute.cs" />

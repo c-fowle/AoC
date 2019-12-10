@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AoC.Common.ExtensionMethods;
@@ -11,10 +12,10 @@ namespace AoC._2019.Classes
         private List<long> Phases { get; }
         private bool Completed { get; set; }
         private long ProgramOutput { get; set; }
-        public AmplifierArray(IntcodeComputerFactory intcodeComputerFactory, long[] initialMemory, List<long> phases)
+        public AmplifierArray(Func<IntcodeComputer> createIntcodeComputer, List<long> phases)
         {
             Amplifiers = new List<IntcodeComputer>();
-            phases.ForEach(phase => Amplifiers.Add(intcodeComputerFactory.CreateIntcodeComputer(initialMemory)));
+            phases.ForEach(phase => Amplifiers.Add(createIntcodeComputer()));
 
             Phases = phases.CloneAsList().ToList();
         }

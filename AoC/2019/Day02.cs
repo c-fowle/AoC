@@ -4,29 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using AoC.Common;
 using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
     [Year(2019)]
     [Day(2)]
-    public class Day02 : Puzzle
+    public class Day02 : _2019Puzzle    
     {
-        private IntcodeComputerFactory IntcodeComputerFactory { get; }
-        private long[] ParseInput(string input) => input.Split(',').ForEach(s => long.Parse(s)).ToArray();
-
-        public Day02() : base()
-        {
-            IntcodeComputerFactory = new IntcodeComputerFactory();
-        }
-
-        private IntcodeComputer GetIntcodeComputer(string input) => IntcodeComputerFactory.CreateIntcodeComputer(ParseInput(input), new int[] { 1, 2, 99 });
-
         protected override string Part1(string input)
         {
             var result = GetIntcodeComputer(input).RunProgram(new IntcodeProgramInput(new Action<long[]>(memory =>

@@ -16,7 +16,7 @@ namespace AoC._2017.Day05
     //[Test("0\n3\n0\n1\n-3", "5", "10")]
     public class Day05 : Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
+        private int[] ParseInput(string input) => input.Split('\n').Select(s => int.Parse(s)).ToArray();
 
         protected override string Part1(string input)
         {

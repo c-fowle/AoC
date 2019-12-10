@@ -9,6 +9,7 @@ using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
@@ -17,7 +18,7 @@ namespace AoC._2019
     [Test("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "42", null)]
     [Test("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN", null, "4")]
 
-    public class Day06 : Puzzle
+    public class Day06 : _2019Puzzle
     {
         private Dictionary<string, string> ParentObjectCache { get; }
         private Dictionary<string, List<string>> OrbitTreeCache { get; }
@@ -27,7 +28,7 @@ namespace AoC._2019
             ParentObjectCache = new Dictionary<string, string>();
             OrbitTreeCache = new Dictionary<string, List<string>>();
         }
-        private List<string[]> ParseInput(string input) => input.Split('\n').ForEach(s => s.Split(')').ToArray()).ToList();
+        private List<string[]> ParseInput(string input) => input.Split('\n').Select(s => s.Split(')').ToArray()).ToList();
         private void ClearCaches()
         {
             ParentObjectCache.Clear();

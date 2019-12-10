@@ -9,6 +9,7 @@ using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
@@ -19,17 +20,17 @@ namespace AoC._2019
     [Test("1969", "654", "966")]
     [Test("100756", "33583", "50346")]
     [Test("12\n14\n1969\n100756", "34241", "51316")]
-    public class Day01 : Puzzle
+    public class Day01 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
+        private int[] ParseInput(string input) => input.Split('\n').Select(s => int.Parse(s)).ToArray();
 
-        protected override string Part1(string input) => ParseInput(input).ForEach<int, int>(i => (int)Math.Floor((double)i / 3d) - 2).Sum().ToString();
+        protected override string Part1(string input) => ParseInput(input).Select(i => (int)Math.Floor((double)i / 3d) - 2).Sum().ToString();
 
         protected override string Part2(string input)
         {
             var parsedInput = ParseInput(input);
 
-            var fuelRequirement = parsedInput.ForEach<int, int>(i =>
+            var fuelRequirement = parsedInput.Select(i =>
             {
                 var totalFuel = 0;
                 var thisMass = i;

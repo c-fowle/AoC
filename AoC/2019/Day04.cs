@@ -10,14 +10,15 @@ using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
     [Year(2019)]
     [Day(4)]
-    public class Day04 : Puzzle
+    public class Day04 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('-').ForEach(s => int.Parse(s)).ToArray();
+        private int[] ParseInput(string input) => input.Split('-').Select(s => int.Parse(s)).ToArray();
         private int[] GetDigits(int number)
         {
             var digitCount = 1;

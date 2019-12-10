@@ -9,6 +9,7 @@ using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
 using AoC._2019.Classes;
+using AoC._2019.Enums;
 
 namespace AoC._2019
 {
@@ -18,9 +19,9 @@ namespace AoC._2019
     [Test("input", null, null)]
     [Test("input", null, null)]
     [Test("input", null, null)]
-    public class Day20 : Puzzle
+    public class Day20 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').ForEach(s => int.Parse(s)).ToArray();
+        private int[] ParseInput(string input) => input.Split('\n').Select(s => int.Parse(s)).ToArray();
 
         protected override string Part1(string input)
         {
