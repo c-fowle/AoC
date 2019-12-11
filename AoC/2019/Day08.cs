@@ -68,7 +68,7 @@ namespace AoC._2019
                     while (layers[layer][pos] == 2) layer++;
 
                     output[x, y] = layers[layer][pos];
-                    Console.Write(output[x, y] == 1 ? "#" : " ");
+                    Console.Write(output[x, y] == 1 ? "█" : " ");
                 }
                 Console.WriteLine();
             }
