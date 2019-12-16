@@ -24,6 +24,18 @@ namespace AoC._2019.Classes
         public bool Exited { get; private set; }
         public bool Errored { get; private set; }
         public bool Paused { get; private set; }
+        private bool OutputReady
+        {
+            get
+            {
+                var ready = false;
+                lock (OutputLock)
+                {
+                    ready = Outputs.Count > 0;
+                }
+                return ready;
+            }
+        }
 
         public IntcodeComputer(IList<Opcode> availableOperations, long[] initialMemoryState)
         {
@@ -53,7 +65,7 @@ namespace AoC._2019.Classes
                     }
                 }
                 Paused = true;
-                Thread.Sleep(100);
+                Thread.Sleep(1);
             }
 
             throw new InterruptedWhileAwaitingInputError();
@@ -67,20 +79,21 @@ namespace AoC._2019.Classes
             }
         }
 
-        public bool OutputReady()
+        public long? GetNextOutput()
         {
-            var ready = false;
-            lock (OutputLock)
+            var nextOutput = default(long?);
+
+            while (!nextOutput.HasValue)
             {
-                ready = Outputs.Count > 0;
-            }
-            return ready;
-        }
-        public long? GetLastOutput()
-        {
-            lock (OutputLock)
-            {
-                if (Outputs.Count > 0) return Outputs.Dequeue();
+                if (OutputReady)
+                {
+                    lock (OutputLock)
+                    {
+                        if (Outputs.Count > 0) return Outputs.Dequeue();
+                    }
+                }
+                Thread.Sleep(1);
+                if (!OutputReady && (Exited || Paused)) break;
             }
             return null;
         }

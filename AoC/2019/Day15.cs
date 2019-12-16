@@ -21,10 +21,10 @@ namespace AoC._2019
     [Test("input", null, null)]
     public class Day15 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').Select(s => int.Parse(s)).ToArray();
-
         protected override string Part1(string input)
         {
+            var intcodeComputer = GetIntcodeComputer(input);
+
             throw new NotImplementedException();
         }
 

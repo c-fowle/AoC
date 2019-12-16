@@ -36,13 +36,14 @@ namespace AoC._2019
 
             while (!intcodeComputer.Exited)
             {
-                if (!intcodeComputer.OutputReady()) continue;
-                var colour = intcodeComputer.GetLastOutput() == 1;
+                var colourOutput = intcodeComputer.GetNextOutput();
+                var turnDirectionOutput = intcodeComputer.GetNextOutput();
 
-                while (!intcodeComputer.OutputReady()) if (intcodeComputer.Exited) break;
-                if (!intcodeComputer.OutputReady() && intcodeComputer.Exited) break;
+                if (!(colourOutput.HasValue && turnDirectionOutput.HasValue)) continue;
 
-                var turnDirection = intcodeComputer.GetLastOutput() == 1;
+                var colour = colourOutput.Value == 1;
+                var turnDirection = turnDirectionOutput.Value == 1;
+
                 var posString = robotPosition[0].ToString() + "," + robotPosition[1].ToString();
 
                 if (!allTiles.ContainsKey(posString)) allTiles.Add(posString, colour);

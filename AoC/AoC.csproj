@@ -95,6 +95,7 @@
     <Compile Include="Common\Attributes\DayAttribute.cs" />
     <Compile Include="Common\Exceptions\DayAttributeException.cs" />
     <Compile Include="Common\Exceptions\YearAttributeException.cs" />
+    <Compile Include="Common\ExtensionMethods\ArrayExtensions.cs" />
     <Compile Include="Common\IPuzzle.cs" />
     <Compile Include="Common\Puzzle.cs" />
     <Compile Include="Common\Exceptions\InputGetRequestRetriesExceededException.cs" />

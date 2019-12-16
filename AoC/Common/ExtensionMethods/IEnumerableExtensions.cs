@@ -8,27 +8,27 @@ namespace AoC.Common.ExtensionMethods
 {
     public static class IEnumerableExtensions
     {
-        public static void ForEach<T>(this IEnumerable<T> list, Action<T> action)
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
         {
-            foreach (var i in list) action(i);
+            foreach (var i in enumerable) action(i);
         }
 
-        public static IList<T> CloneAsList<T>(this IEnumerable<T> list)
+        public static IList<T> CloneAsList<T>(this IEnumerable<T> enumerable)
         {
             var copy = new List<T>();
-            list.ForEach(copy.Add);
+            enumerable.ForEach(copy.Add);
             return copy;
         }
 
-        public static IList<List<T>> GetPermutations<T>(this IEnumerable<T> list)
+        public static IList<List<T>> GetPermutations<T>(this IEnumerable<T> enumerable)
         {
-            if (list.Count() == 1) return new List<List<T>>() { new List<T>() { list.Single() } };
+            if (enumerable.Count() == 1) return new List<List<T>>() { new List<T>() { enumerable.Single() } };
 
             var permutations = new List<List<T>>();
 
-            for (var pos = 0; pos < list.Count(); ++pos)
+            for (var pos = 0; pos < enumerable.Count(); ++pos)
             {
-                var listCopy = list.CloneAsList().ToList();
+                var listCopy = enumerable.CloneAsList().ToList();
                 var initial = listCopy[pos];
                 listCopy.RemoveAt(pos);
 
@@ -43,6 +43,5 @@ namespace AoC.Common.ExtensionMethods
 
             return permutations;
         }
-
     }
 }

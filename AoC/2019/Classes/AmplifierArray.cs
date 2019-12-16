@@ -32,11 +32,13 @@ namespace AoC._2019.Classes
             {
                 for(var ampCount = 0; ampCount < (Amplifiers.Count); ++ampCount)
                 {
-                    if (Amplifiers[ampCount].OutputReady() && !Amplifiers[(ampCount + 1) % Amplifiers.Count].Exited) Amplifiers[(ampCount + 1) % Amplifiers.Count].AddInput(Amplifiers[ampCount].GetLastOutput().Value);
+                    var ampOutput = Amplifiers[ampCount].GetNextOutput();
+                    if (!ampOutput.HasValue || Amplifiers[(ampCount + 1) % Amplifiers.Count].Exited) continue;
+                    Amplifiers[(ampCount + 1) % Amplifiers.Count].AddInput(ampOutput.Value);
                 }
             }
 
-            while (Amplifiers.Last().OutputReady()) ProgramOutput = Amplifiers.Last().GetLastOutput().Value;
+            ProgramOutput = Amplifiers.Last().GetNextOutput().Value;
             Completed = true;
 
             return ProgramOutput;
