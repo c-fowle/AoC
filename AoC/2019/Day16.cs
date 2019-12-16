@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using AoC.Common;
@@ -15,6 +16,7 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(16)]
+    [Test("12345678", "23845678", null)]
     [Test("80871224585914546619083218645595", "24176176", null)]
     [Test("19617804207202209144916044189917", "73745418", null)]
     [Test("69317163492948606335995924319873", "52432133", null)]
@@ -34,59 +36,32 @@ namespace AoC._2019
             return patternCache;
         }
 
+        private async Task<int> TransformSignalDigit(int[] signal, int digit)
+        {
+            return await Task.Run(() =>
+            {
+                var updatedSignalDigit = 0;
+
+                for (var i = digit; i < signal.Length; i += (digit + 1) * 4) for (var j = 0; j <= digit && (i + j) < signal.Length; ++j) updatedSignalDigit += signal[i + j];
+                for (var i = (3 * digit) + 2; i < signal.Length; i += (digit + 1) * 4) for (var j = 0; j <= digit && (i + j) < signal.Length; ++j) updatedSignalDigit -= signal[i + j];
+
+                updatedSignalDigit = Math.Abs(updatedSignalDigit);
+                updatedSignalDigit = updatedSignalDigit - ((int)Math.Floor(updatedSignalDigit / 10M) * 10);
+
+                return updatedSignalDigit;
+            });
+        }
+
         private int[] TransformSignal(int[] signal, int cycles)
         {
-            //var indexCache = new Dictionary<int, List<int>>();
-
-            //for (var i = 0; i < signal.Length; ++i)
-            //{
-            //    var theseIndexes = new List<int>();
-            //    for (var j = i; j < signal.Length; j += ((i + 1) * 4)) theseIndexes.Add(k);
-            //    indexCache.Add(i, theseIndexes);
-            //}
-
-            //originalSignal.CopyTo(signal, 0);
-
-            //for (var cycleCounter = 0; cycleCounter < cycles; ++cycleCounter)
-            //{
-            //    var updatedSignal = new int[signal.Length];
-
-            //    for (var positionCounter = 0; positionCounter < signal.Length; ++positionCounter)
-            //    {
-            //        var subIndexAdjustment = (2 * positionCounter) + 2;
-            //        var positionValue = Math.Abs(indexCache[positionCounter].Sum(i => signal[i]) - indexCache[positionCounter].Sum(i => signal[i + subIndexAdjustment]));
-            //        positionValue = positionValue - ((int)Math.Floor(positionValue / 10m) * 10);
-            //        updatedSignal[positionCounter] = positionValue;
-            //    }
-
-            //    updatedSignal.CopyTo(signal, 0);
-            //}
-
-            for (var cycleCounter = 0; cycleCounter < cycles; ++cycleCounter)
+            for(var c = 0; c < cycles; ++c)
             {
-                var updatedSignal = new int[signal.Length];
+                var digitCount = 0;
+                var digitCalculations = signal.ToDictionary(i => digitCount, i => TransformSignalDigit(signal, digitCount++));
 
-                for (var i = 0; i < signal.Length; ++i)
-                {
-                    var swapPoint = (int)Math.Ceiling(i / 2m);
+                while (!digitCalculations.All(kvp => kvp.Value.IsCompleted)) Thread.Sleep(1);
 
-                    // Each will need to be determined in this group
-                    for (var j = 0; j < swapPoint; ++j)
-                    {
-                        var comparison = (int)Math.Floor((j + 1m) / (i + 1m));
-                        if (comparison % 2 == 0) continue; // even indexes are always ignored
-                        if ((comparison - 1) % 4 == 0) updatedSignal[i] += signal[j];
-                        else updatedSignal[i] -= signal[j];
-                    }
-
-                    // This group will always be added
-                    for (var j = swapPoint; j <= i; ++j) updatedSignal[i] += signal[j];
-
-                    updatedSignal[i] = int.Parse(Math.Abs(updatedSignal[i]).ToString().Last().ToString());
-                }
-
-                updatedSignal.CopyTo(signal, 0);
-                updatedSignal = null;
+                digitCalculations.ForEach(kvp => signal[kvp.Key] = kvp.Value.Result);
             }
 
             return signal;
