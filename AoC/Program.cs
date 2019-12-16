@@ -252,6 +252,7 @@ namespace AoC
                     Console.WriteLine("Part {0}", partToRun);
 
                     IList<PuzzleResult> puzzleTestResults = null;
+                    var exceptionInTests = false;
 
                     try
                     {
@@ -262,16 +263,17 @@ namespace AoC
                         Console.WriteLine("Exception during tests for part {0}:", partToRun);
                         Console.WriteLine(ex.Message);
                         Console.WriteLine(ex.StackTrace);
+                        exceptionInTests = true; 
                     }
 
-                    if (puzzleTestResults == null || puzzleTestResults.Count() == 0 || puzzleTestResults.All(result =>
+                    if (!exceptionInTests && (puzzleTestResults == null || puzzleTestResults.Count() == 0 || puzzleTestResults.All(result =>
                     {
                         if (result.SolutionResponse != SolutionResponse.Correct)
                         {
                             Console.WriteLine("Test failed with message: '{0}'", result.FullTextResponse);
                         }
                         return result.SolutionResponse == SolutionResponse.Correct;
-                    }))
+                    })))
                     {
                         if (!Directory.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()))) Directory.CreateDirectory(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString()));
                         if (!File.Exists(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt"))) File.Create(Path.Combine("Data", selectedYear.ToString(), selectedDay.ToString(), "SolutionHistory.txt")).Close();
