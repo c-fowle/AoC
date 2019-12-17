@@ -25,6 +25,9 @@ namespace AoC._2019
             var programResult = intcodeComputer.RunProgram(new IntcodeProgramInput()).GetAwaiter().GetResult();
             var screenState = new string(programResult.GetOutputs().SelectMany(i => ASCIIEncoding.ASCII.GetChars(new byte[] { (byte)i })).ToArray()).Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
+            screenState.ForEach(Console.WriteLine);
+            Console.ReadKey();
+
             var total = 0;
 
             for (var y = 1; y < screenState.Length - 1; ++y)
