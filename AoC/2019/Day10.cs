@@ -31,25 +31,6 @@ namespace AoC._2019
             else if (x <= 0 && y < 0) return Quadrant.BottomLeft;
             return Quadrant.TopLeft;
         }
-        private List<int?> GetFactors(int i)
-        {
-            var factors = new List<int?>();
-            for (var factor = 1; factor <= Math.Sqrt(i); ++factor) if ((i % factor) == 0) factors.Add(factor);
-            return factors;
-        }
-        private int? GetLargestCommonFactor(int a, int b)
-        {
-            var modA = Math.Abs(a);
-            var modB = Math.Abs(b);
-
-            if (modA == 0 && modB == 0) return null;
-            if (modA == 0 && modB != 0) return modB;
-            if (modA == 0 && modB == 0) return modA;
-            if (modA == modB) return modA;
-
-            var bFactors = GetFactors(b);
-            return GetFactors(a).Where(f => bFactors.Contains(f)).OrderByDescending(i => i).FirstOrDefault();
-        }
         private decimal GetAngle(params int[] coords)
         {
             if (coords[1] == 0)

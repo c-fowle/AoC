@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AoC.Common;
 using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
+using AoC.Common.Helpers;
 
 using AoC._2019.Classes;
 using AoC._2019.Enums;
@@ -35,39 +36,66 @@ namespace AoC._2019
 
             return patternCache;
         }
-
-        private async Task<int> TransformSignalDigit(int[] signal, int digit)
+        private async Task<int> TransformDigitAsync(int[] signal, List<int> indexes, int repetitionLength, int digitCounter)
         {
             return await Task.Run(() =>
             {
-                var updatedSignalDigit = 0;
+                //var patternRepetitionLength = (digitCounter + 1) * 4;
+                var subtractionIndexAdjustment = (2 * digitCounter) + 2;
+                //var repeatPoint = MathHelper.GetLowestCommonMultiple(signalRepetitionLength, patternRepetitionLength);
+                //repeatPoint = repeatPoint > signal.Length ? signal.Length : repeatPoint;
 
-                for (var i = digit; i < signal.Length; i += (digit + 1) * 4) for (var j = 0; j <= digit && (i + j) < signal.Length; ++j) updatedSignalDigit += signal[i + j];
-                for (var i = (3 * digit) + 2; i < signal.Length; i += (digit + 1) * 4) for (var j = 0; j <= digit && (i + j) < signal.Length; ++j) updatedSignalDigit -= signal[i + j];
+                var transformationTotal = indexes.Sum(i =>
+                {
+                    var indexTotal = 0;
+                    for (var j = 0; j <= digitCounter && i + j < repetitionLength; ++j) indexTotal += signal[i] - (i + subtractionIndexAdjustment > signal.Length ? 0 : signal[i + subtractionIndexAdjustment]);
+                    return indexTotal;
+                }) * (signal.Length / repetitionLength);
 
-                updatedSignalDigit = Math.Abs(updatedSignalDigit);
-                updatedSignalDigit = updatedSignalDigit - ((int)Math.Floor(updatedSignalDigit / 10M) * 10);
+                //for (var i = digitCounter; i < repeatPoint; i += patternRepetitionLength) for (var j = 0; j <= digitCounter && (i + j) < repeatPoint; ++j) transformationTotal += signal[i + j];
+                //for (var i = (3 * digitCounter) + 2; i < repeatPoint; i += patternRepetitionLength) for (var j = 0; j <= digitCounter && (i + j) < repeatPoint; ++j) transformationTotal -= signal[i + j];
 
-                return updatedSignalDigit;
+                transformationTotal = Math.Abs(transformationTotal);
+
+                return (int)(transformationTotal - (long)(Math.Floor(transformationTotal / 10M) * 10));
             });
         }
-
-        private int[] TransformSignal(int[] signal, int cycles)
+        private int[] TransformSignal(int[] baseSignal, int signalRepeats, int cycles)
         {
-            for(var c = 0; c < cycles; ++c)
+            var fullSignal = new int[baseSignal.Length * signalRepeats];
+            for (var i = 0; i < signalRepeats; ++i) baseSignal.CopyTo(fullSignal, i * baseSignal.Length);
+
+            var digitCounter = 0;
+            var indexLookup = fullSignal.ToDictionary(x => digitCounter++, x =>
             {
-                var digitCount = 0;
-                var digitCalculations = signal.ToDictionary(i => digitCount, i => TransformSignalDigit(signal, digitCount++));
+                var patternRepetitionLength = digitCounter * 4;
+                var repeatPoint = (int)MathHelper.GetLowestCommonMultiple(baseSignal.Length, patternRepetitionLength);
+                repeatPoint = repeatPoint > fullSignal.Length ? fullSignal.Length : repeatPoint;
 
-                while (!digitCalculations.All(kvp => kvp.Value.IsCompleted)) Thread.Sleep(1);
+                var indexes = new List<int>();
+                for (var i = (digitCounter - 1); i < repeatPoint; i += patternRepetitionLength) indexes.Add(i);
 
-                digitCalculations.ForEach(kvp => signal[kvp.Key] = kvp.Value.Result);
+                return new Tuple<List<int>, int>(indexes, repeatPoint);
+            });
+
+
+            for (var cycleCounter = 0; cycleCounter < cycles; ++cycleCounter)
+            {
+                digitCounter = 0;
+                var transformations = fullSignal.ToDictionary(i => digitCounter, i => TransformDigitAsync(fullSignal, indexLookup[digitCounter].Item1, indexLookup[digitCounter].Item2, digitCounter++));
+
+                while (transformations.Any(kvp => !kvp.Value.IsCompleted)) Thread.Sleep(1);
+
+                transformations.ForEach(kvp => fullSignal[kvp.Key] = kvp.Value.Result);
+                transformations.ForEach(kvp => kvp.Value.Dispose());
+                transformations = null;
+
             }
 
-            return signal;
+            return fullSignal;
         }
 
-        protected override string Part1(string input) => String.Join("", TransformSignal(ParseInput(input), 100).Take(8).Select(i => i.ToString()));
+        protected override string Part1(string input) => String.Join("", TransformSignal(ParseInput(input), 1, 100).Take(8).Select(i => i.ToString()));
         protected override string Part2(string input)
         {
             var signal = ParseInput(input);
@@ -76,7 +104,7 @@ namespace AoC._2019
             for (var i = 0; i < 7; ++i) skipCount += signal[i] * (int)Math.Pow(10, (6 - i));
             skipCount = skipCount % (input.Length * 10000);
 
-            return String.Join("", TransformSignal((new int[10000][]).Populate(signal).SelectMany(i => i).ToArray(), 100).Skip(skipCount).Take(8).Select(i => i.ToString()));
+            return String.Join("", TransformSignal(signal, 10000, 100).Skip(skipCount).Take(8).Select(i => i.ToString()));
         }
     }
 }
