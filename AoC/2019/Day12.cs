@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AoC.Common;
 using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
+using AoC.Common.Helpers;
 
 using AoC._2019.Classes;
 using AoC._2019.Enums;
@@ -18,73 +19,97 @@ namespace AoC._2019
     {
         public int ID { get; }
 
-        private List<int[]> History { get; }
-        private int LoopStart { get; set; }
-        private int LoopEnd { get; set; }
+        private List<int[]>[] History { get; }
+        public int[] CoordinateLoopLengths { get; }
+        private long? _LoopLength { get; set; }
 
-        public bool LoopExists { get => LoopStart != -1 && LoopEnd != -1; }
+        private int[] InitialPosition { get; }
+           
+        public bool LoopExists { get => CoordinateLoopLengths.All(i => i != -1); }
+        public long LoopLength
+        {
+            get
+            {
+                if (!_LoopLength.HasValue) _LoopLength = MathHelper.GetLowestCommonMultiple(CoordinateLoopLengths[0], MathHelper.GetLowestCommonMultiple(CoordinateLoopLengths[1], CoordinateLoopLengths[2]));
+                return _LoopLength.Value;
+            }
+        }
 
         public Moon(int id, int x, int y, int z)
         {
             ID = id;
 
-            History = new List<int[]>();
+            History = new List<int[]>[] { new List<int[]>(), new List<int[]>(), new List<int[]>() };
+            CoordinateLoopLengths = new int[] { -1, -1, -1 };
+            InitialPosition = new int[] { x, y, z };
 
-            var initialState = new int[] { x, y, z, 0, 0, 0 };
-            History.Add(initialState);
-
-            LoopStart = -1;
-            LoopEnd = -1;
+            History[0].Add(new int[] { x, 0 });
+            History[1].Add(new int[] { y, 0 });
+            History[2].Add(new int[] { z, 0 });
         }
         public int[] GetStateAtStep(long stepNo)
         {
-            if (History.Count > stepNo) return History[(int)stepNo];
-            if (!LoopExists) return null;
+            var state = new int[6];
 
-            var loopPosition = (int)((stepNo - LoopStart) % (LoopEnd - LoopStart));
-            if (History.Count <= loopPosition) return null;
+            for (var i = 0; i < 3; ++i)
+            {
+                if (History[i].Count > stepNo)
+                {
+                    state[i] = History[i][(int)stepNo][0];
+                    state[i + 3] = History[i][(int)stepNo][1];
+                    continue;
+                }
+                if (CoordinateLoopLengths[i] == -1) throw new Exception("No position for requested step and no loop in coordinate");
 
-            return History[LoopStart + loopPosition].CloneAsList().ToArray();
+                var loopPosition = (int)(stepNo % CoordinateLoopLengths[i]);
+                state[i] = History[i][loopPosition][0];
+                state[i + 3] = History[i][loopPosition][1];
+            }
+
+            return state;
         }
         public void UpdatePosition(int[] acceleration)
         {
             if (LoopExists) return;
 
-            var previousState = History.Last();
-            var newState = new int[6];
-            
-            newState[3] = previousState[3] + acceleration[0];
-            newState[4] = previousState[4] + acceleration[1];
-            newState[5] = previousState[5] + acceleration[2];
-
-            newState[0] = previousState[0] + newState[3];
-            newState[1] = previousState[1] + newState[4];
-            newState[2] = previousState[2] + newState[5];
-
-            var matches = History.Where(old => old.SequenceEqual(newState));
-
-            if (matches.Count() < 2) History.Add(newState);
-            else
+            for (var i = 0; i < 3; ++i)
             {
-                var first = History.FindIndex(i => i.SequenceEqual(newState));
-                var second = History.FindLastIndex(i => i.SequenceEqual(newState));
+                if (CoordinateLoopLengths[i] != -1) continue;
 
-                var counter = 0;
-                var loops = true;
+                var previousState = History[i].Last();
+                var newState = new int[2];
 
-                while (counter < (second - first) && loops)
+                newState[1] = previousState[1] + acceleration[i];
+                newState[0] = previousState[0] + newState[1];
+
+                if (newState[0] == InitialPosition[i] && newState[1] == 0)
                 {
-                    if (History.Count <= (second + counter)) loops = false;
-                    else loops &= History[first + counter].SequenceEqual(History[second + counter]);
-                    ++counter;
+                    var occurances = History[i].Where(h => h.SequenceEqual(newState)).ToList();
+                    if (occurances.Count() % 2 == 0)
+                    {
+                        var loopRestart = History[i].IndexOf(occurances[occurances.Count() / 2]);
+
+                        if (History[i].Count >= loopRestart * 2)
+                        {
+                            var loopFound = true;
+                            for (var j = 0; j < loopRestart; ++j)
+                            {
+                                try
+                                {
+                                    loopFound &= History[i][j].SequenceEqual(History[i][loopRestart + j]);
+                                    if (!loopFound) break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    var a = ex;
+                                }
+                            }
+                            if (loopFound) CoordinateLoopLengths[i] = loopRestart;
+                        }
+                    }
                 }
 
-                if (loops)
-                {
-                    LoopStart = first;
-                    LoopEnd = second;
-                }
-                else History.Add(newState);
+                History[i].Add(newState);
             }
         }
     }
@@ -118,36 +143,26 @@ namespace AoC._2019
             var positions = allMoons.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.GetStateAtStep(lastStep));
             var accelerations = allMoons.ToDictionary(kvp => kvp.Key, kvp => new int[] { 0, 0, 0 });
 
-            for(var coordinate = 0; coordinate < 3; ++coordinate)
+            var keys = positions.Keys.ToList();
+
+            for (var i = 0; i < keys.Count; ++i)
             {
-                var orderedByPosition = positions.ToDictionary(kvp => kvp.Key, kvp => kvp.Value[coordinate]).OrderBy(kvp => kvp.Value);
-
-                if (orderedByPosition == null) throw new Exception();
-
-                var first = orderedByPosition.First();
-
-                var lastScore = first.Value;
-                var ids = new List<int> { first.Key };
-                var ranks = new List<int> { 0 };
-
-                for (var counter = 1; counter < orderedByPosition.Count(); ++counter)
+                for (var j = (i + 1); j < keys.Count; ++j)
                 {
-                    if (lastScore == orderedByPosition.ElementAt(counter).Value)
+                    for (var coordinate = 0; coordinate < 3; ++coordinate)
                     {
-                        ids.Add(orderedByPosition.ElementAt(counter).Key);
-                        ranks.Add(counter);
-                    }
-                    else
-                    {
-                        ids.ForEach(id => accelerations[id][coordinate] = (ranks.Sum(r => AccelerationByRank[r]) / ids.Count));
-
-                        lastScore = orderedByPosition.ElementAt(counter).Value;
-                        ids = new List<int> { orderedByPosition.ElementAt(counter).Key };
-                        ranks = new List<int> { counter };
+                        if (positions[i][coordinate] < positions[j][coordinate])
+                        {
+                            accelerations[i][coordinate]++;
+                            accelerations[j][coordinate]--;
+                        }
+                        else if (positions[i][coordinate] > positions[j][coordinate])
+                        {
+                            accelerations[i][coordinate]--;
+                            accelerations[j][coordinate]++;
+                        }
                     }
                 }
-
-                ids.ForEach(id => accelerations[id][coordinate] = (ranks.Sum(r => AccelerationByRank[r]) / ids.Count));
             }
 
             return accelerations;
@@ -224,18 +239,23 @@ namespace AoC._2019
 
             while(true)
             {
-                if (!moons.All(kvp => kvp.Value.LoopExists))
-                {
-                    var currentAccelerations = GetAccelerations(stepNumber++, moons);
-                    moons.ForEach(kvp => kvp.Value.UpdatePosition(currentAccelerations[kvp.Key]));
-                }
+                if (moons.All(kvp => kvp.Value.LoopExists)) break;
 
-                for (var backCount = 0L; backCount < stepNumber; ++backCount)
-                {
-                    if (moons.All(kvp => kvp.Value.GetStateAtStep(backCount).SequenceEqual(kvp.Value.GetStateAtStep(stepNumber)))) return stepNumber.ToString();
-                }
-
+                var currentAccelerations = GetAccelerations(stepNumber++, moons);
+                moons.ForEach(kvp => kvp.Value.UpdatePosition(currentAccelerations[kvp.Key]));             
             }
+
+            var moonKeys = moons.Keys.ToList();
+            var loopDuration = (long)moons[moonKeys[0]].LoopLength;
+
+            for (var i = 1; i < moonKeys.Count; ++i)
+            {
+                loopDuration = MathHelper.GetLowestCommonMultiple(loopDuration, moons[moonKeys[i]].LoopLength);
+            }
+
+            Console.WriteLine(loopDuration.ToString());
+
+            return loopDuration.ToString();
         }
     }
 }
