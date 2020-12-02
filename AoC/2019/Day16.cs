@@ -22,8 +22,8 @@ namespace AoC._2019
     [Test("19617804207202209144916044189917", "73745418", null)]
     [Test("69317163492948606335995924319873", "52432133", null)]
     [Test("03036732577212944063491565474664", null, "84462026")]
-    //[Test("02935109699940807407585447034323", null, "78725270")]
-    //[Test("03081770884921959731165446850517", null, "53553731")]
+    [Test("02935109699940807407585447034323", null, "78725270")]
+    [Test("03081770884921959731165446850517", null, "53553731")]
     public class Day16 : _2019Puzzle
     {
         private int[] ParseInput(string input) => input.Select(c => int.Parse(c.ToString())).ToArray();
@@ -40,10 +40,7 @@ namespace AoC._2019
         {
             return await Task.Run(() =>
             {
-                //var patternRepetitionLength = (digitCounter + 1) * 4;
                 var subtractionIndexAdjustment = (2 * digitCounter) + 2;
-                //var repeatPoint = MathHelper.GetLowestCommonMultiple(signalRepetitionLength, patternRepetitionLength);
-                //repeatPoint = repeatPoint > signal.Length ? signal.Length : repeatPoint;
 
                 var transformationTotal = indexes.Sum(i =>
                 {
@@ -51,9 +48,6 @@ namespace AoC._2019
                     for (var j = 0; j <= digitCounter && i + j < signal.Length; ++j) indexTotal += signal[i + j] - (i + j + subtractionIndexAdjustment < signal.Length ? signal[i + j + subtractionIndexAdjustment] : 0);
                     return indexTotal;
                 });
-
-                //for (var i = digitCounter; i < repeatPoint; i += patternRepetitionLength) for (var j = 0; j <= digitCounter && (i + j) < repeatPoint; ++j) transformationTotal += signal[i + j];
-                //for (var i = (3 * digitCounter) + 2; i < repeatPoint; i += patternRepetitionLength) for (var j = 0; j <= digitCounter && (i + j) < repeatPoint; ++j) transformationTotal -= signal[i + j];
 
                 transformationTotal = Math.Abs(transformationTotal);
 
