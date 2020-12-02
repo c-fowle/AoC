@@ -11,8 +11,6 @@ using AoC.Common;
 using AoC.Common.Attributes;
 using AoC.Common.ExtensionMethods;
 
-using AoC._2017.Day05;
-
 namespace AoC
 {
     class Program
