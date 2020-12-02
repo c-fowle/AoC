@@ -29,7 +29,7 @@ namespace AoC.Common.Helpers
 
             if (modA == 0 && modB == 0) return null;
             if (modA == 0 && modB != 0) return modB;
-            if (modA == 0 && modB == 0) return modA;
+            if (modA != 0 && modB == 0) return modA;
             if (modA == modB) return modA;
 
             var bFactors = GetFactors(b);
