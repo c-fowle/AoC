@@ -15,57 +15,6 @@ using AoC._2017.Day05;
 
 namespace AoC
 {
-    //enum Direction
-    //{
-    //    Up = 0,
-    //    Down = 1,
-    //    Left = 2,
-    //    Right = 3
-    //}
-
-    //class State
-    //{
-    //    public int X { get; set; }
-    //    public int Y { get; set; }
-    //    public string Path { get; set; }
-        
-    //    public State(int x, int y, string path)
-    //    {
-    //        X = x;
-    //        Y = y;
-    //        Path = path;
-    //    }
-
-    //    public IList<State> GetChildren (string passcode, char[] openChars, int gridSize=4)
-    //    {
-    //        var result = new List<State>();
-    //        var doorStates = new bool[4];
-
-    //        using (var md5Hash = MD5.Create())
-    //        {
-    //            byte[] data = md5Hash.ComputeHash(Encoding.ASCII.GetBytes(passcode + this.Path));
-    //            if (data.Length < 2) return result;
-
-    //            var dataStr = data[0].ToString("X2") + data[1].ToString("X2");
-    //            if (dataStr.Length < 4) return result;
-
-    //            for (var i = 0; i < 4; ++i) doorStates[i] = openChars.Contains(dataStr[i]);
-    //        }
-
-    //        if (this.Y > 0 && doorStates[(int)Direction.Up]) result.Add(new State(this.X, this.Y - 1, this.Path + "U"));
-    //        if (this.Y < (gridSize - 1) && doorStates[(int)Direction.Down]) result.Add(new State(this.X, this.Y + 1, this.Path + "D"));
-    //        if (this.X > 0 && doorStates[(int)Direction.Left]) result.Add(new State(this.X - 1, this.Y, this.Path + "L"));
-    //        if (this.X < (gridSize - 1) && doorStates[(int)Direction.Right]) result.Add(new State(this.X + 1, this.Y, this.Path + "R"));
-
-    //        return result;
-    //    }
-    //}
-
-    class SomeAttribute : Attribute
-    {
-        public SomeAttribute() { }
-    }
-
     class Program
     {      
         static void Main(string[] args)
