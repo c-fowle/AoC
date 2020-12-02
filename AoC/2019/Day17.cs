@@ -15,6 +15,7 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(17)]
+    [Test("", null, "blah")]
     public class Day17 : _2019Puzzle
     {
         protected override string Part1(string input)
