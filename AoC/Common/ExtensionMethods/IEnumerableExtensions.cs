@@ -43,5 +43,51 @@ namespace AoC.Common.ExtensionMethods
 
             return permutations;
         }
+        public static long Product(this IEnumerable<byte> enumerable)
+        {
+            if (enumerable.Count() == 0) return 0;
+
+            var product = 1;
+            enumerable.ForEach(i => product *= i);
+
+            return product;
+        }
+        public static long Product(this IEnumerable<int> enumerable)
+        {
+            if (enumerable.Count() == 0) return 0;
+
+            var product = 1L;
+            enumerable.ForEach(i => product *= i);
+
+            return product;
+        }
+
+        public static long Product(this IEnumerable<long> enumerable)
+        {
+            if (enumerable.Count() == 0) return 0;
+
+            var product = 1L;
+            enumerable.ForEach(i => product *= i);
+
+            return product;
+        }
+        public static double Product(this IEnumerable<float> enumerable)
+        {
+            if (enumerable.Count() == 0) return 0;
+
+            var product = 1D;
+            enumerable.ForEach(i => product *= i);
+
+            return product;
+        }
+        public static double Product(this IEnumerable<double> enumerable)
+        {
+            if (enumerable.Count() == 0) return 0;
+
+            var product = 1D;
+            enumerable.ForEach(i => product *= i);
+
+            return product;
+        }
     }
 }
