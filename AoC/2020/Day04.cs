@@ -30,19 +30,6 @@ namespace AoC._2020
         "hgt:59cm ecl:zzz\neyr:2038 hcl:74454a iyr:2023\npid:3556412378 byr:2007", "4", "0")]
     public class Day04 : Puzzle
     {
-        private bool ValidateHeight(string s)
-        {
-            var unit = s.Substring(s.Length - 2, 2);
-            var number = s.Substring(0, s.Length - 2);
-            var parsedNumber = 0;
-
-            if (!int.TryParse(number, out parsedNumber)) return false;
-
-            if (unit == "cm" && parsedNumber >= 150 && parsedNumber <= 193) return true;
-            if (unit == "in" && parsedNumber >= 59 && parsedNumber <= 76) return true;
-            return false;
-        }
-
         protected override string Part1(string input) => new Regex(@"(?:byr:\S*?\s{0,1}()|iyr:\S*?\s{0,1}()|eyr:\S*?\s{0,1}()|hgt:\S*?\s{0,1}()|hcl:\S*?\s{0,1}()|ecl:\S*?\s{0,1}()|pid:\S*?\s{0,1}()|(?:cid:\S*?\s{0,1}|)()){8}\1\2\3\4\5\6\7\8\n{0,2}").Matches(input).Count.ToString();
         protected override string Part2(string input)
         {
