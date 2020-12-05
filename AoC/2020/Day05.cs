@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using AoC.Common;
@@ -46,11 +47,19 @@ namespace AoC._2020
 
             return seatIds;
         }
+        private List<int> ParseInputBinary(string input)
+        {
+            var brRegex = new Regex("[BR]");
+            var flRegex = new Regex("[FL]");
 
-        protected override string Part1(string input) => ParseInput(input).Max().ToString();
+            var binaryStrings = flRegex.Replace(brRegex.Replace(input, "1"), "0").Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return binaryStrings.Select(s => Convert.ToInt32(s, 2)).ToList();
+        }
+
+        protected override string Part1(string input) => ParseInputBinary(input).Max().ToString();
         protected override string Part2(string input)
         {
-            var seatIds = ParseInput(input);
+            var seatIds = ParseInputBinary(input);
             var mySeatIdNeighbour = seatIds.Single(s => seatIds.Contains(s + 2) && !seatIds.Contains(s + 1));
             return (mySeatIdNeighbour + 1).ToString();
         }
