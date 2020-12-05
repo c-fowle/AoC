@@ -92,6 +92,7 @@
     <Compile Include="2019\_2019Puzzle.cs" />
     <Compile Include="2020\Day01.cs" />
     <Compile Include="2020\Day02.cs" />
+    <Compile Include="2020\Day05.cs" />
     <Compile Include="2020\Day04.cs" />
     <Compile Include="2020\Day03.cs" />
     <Compile Include="Common\Attributes\TestAttribute.cs" />
