@@ -1,0 +1,1 @@
+print([a[b] * a[c] * a[d] for a in [[int(a) for a in open('_').read().split('\n')]] for b in range(len(a)) for c in range(b, len(a)) for d in range(c,len(a)) if a[b] + a[c] + a[d] == 2020][0])

@@ -1,0 +1,1 @@
+print((lambda a: [b for b in a if b+1 not in a and b+2 in a][0]+1)([int(''.join([str(int(c in 'BR')) for c in b]),2) for b in open('_').read().split('\n')]))

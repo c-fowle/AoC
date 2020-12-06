@@ -1,0 +1,1 @@
+print((lambda _: sum([1 for x, y in zip(range(0,len(_)*3,3),range(len(_))) if _[y][x%len(_[0])] == '#']))(open('_').read().split('\n')))

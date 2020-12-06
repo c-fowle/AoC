@@ -1,0 +1,1 @@
+print(__import__('functools').reduce(lambda a, b: a*b, (lambda _: [sum([1 for x, y in zip(range(0,len(_)*sx,sx),range(0, len(_), sy)) if _[y][x%len(_[0])] == '#']) for sx, sy in [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]])(open('_').read().split('\n'))))

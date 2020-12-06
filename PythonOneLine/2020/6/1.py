@@ -1,0 +1,1 @@
+print(sum([len(set(s.replace('\n', ''))) for s in open('_').read().split('\n\n')]))
