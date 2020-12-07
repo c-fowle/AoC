@@ -15,22 +15,44 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(19)]
-    [Test("input",null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
     public class Day19 : _2019Puzzle
     {
-        private int[] ParseInput(string input) => input.Split('\n').Select(s => int.Parse(s)).ToArray();
-
         protected override string Part1(string input)
         {
-            throw new NotImplementedException();
+            var affectedTileCount = 0;
+
+            for (var x = 0; x < 50; ++x)
+            {
+                for (var y = 0; y < 50; ++y)
+                {
+                    var intcodeComputer = GetIntcodeComputer(input);
+                    var tileResult = intcodeComputer.RunProgram(new IntcodeProgramInput(inputs: new long[] { (long)x, (long)y })).GetAwaiter().GetResult();
+
+                    affectedTileCount += (int)tileResult.LastOutput;
+                }
+            }
+
+            return affectedTileCount.ToString();
         }
 
         protected override string Part2(string input)
         {
-            throw new NotImplementedException();
+            var tiles = new Dictionary<string, bool>();
+            var distance = 0;
+
+            while (true)
+            {
+                for (var i = 0; i <= distance; ++i)
+                {
+                    // x = i; y = distance
+                    var tileKey = i.ToString() + "-" + distance.ToString();
+                    
+
+                    // x = distance; y = i
+                }
+
+                distance++;
+            }
         }
     }
 }

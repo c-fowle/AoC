@@ -15,10 +15,6 @@ namespace AoC._2019
 {
     [Year(2019)]
     [Day(21)]
-    [Test("input",null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
-    [Test("input", null, null)]
     public class Day21 : _2019Puzzle
     {
         private string ExecuteSpringdroidProgram(string input, string springscript)

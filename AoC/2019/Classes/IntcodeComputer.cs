@@ -11,8 +11,9 @@ namespace AoC._2019.Classes
 {
     public class IntcodeComputer
     {
-        protected IList<Opcode> AvailableOperations { get; }
+        private IList<Opcode> AvailableOperations { get; }
         private long[] InitialMemory { get; }
+        private long? DefaultInput { get; }
 
         private ulong InstructionPointer { get; set; }
         private long RelativeBase { get; set; }
@@ -24,7 +25,7 @@ namespace AoC._2019.Classes
         public bool Exited { get; private set; }
         public bool Errored { get; private set; }
         public bool Paused { get; private set; }
-        private bool OutputReady
+        public bool OutputReady
         {
             get
             {
@@ -37,7 +38,7 @@ namespace AoC._2019.Classes
             }
         }
 
-        public IntcodeComputer(IList<Opcode> availableOperations, long[] initialMemoryState)
+        public IntcodeComputer(IList<Opcode> availableOperations, long[] initialMemoryState, long? defaultInput = null)
         {
             AvailableOperations = new List<Opcode>();
             availableOperations.ForEach(AvailableOperations.Add);
@@ -50,6 +51,8 @@ namespace AoC._2019.Classes
 
             Outputs = new Queue<long>();
             OutputLock = new object();
+
+            DefaultInput = defaultInput;
         }
 
         private long GetNextInput()
@@ -63,6 +66,7 @@ namespace AoC._2019.Classes
                         Paused = false;
                         return Inputs.Dequeue();
                     }
+                    else if (DefaultInput.HasValue) return DefaultInput.Value;
                 }
                 Paused = true;
                 Thread.Sleep(1);
@@ -76,6 +80,14 @@ namespace AoC._2019.Classes
             lock (InputLock)
             {
                 Inputs.Enqueue(input);
+            }
+        }
+
+        public void AddInputs(long[] inputs)
+        {
+            lock (InputLock)
+            {
+                inputs.ForEach(Inputs.Enqueue);
             }
         }
 

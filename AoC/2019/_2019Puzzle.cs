@@ -17,10 +17,10 @@ namespace AoC._2019
             IntcodeComputerFactory = new IntcodeComputerFactory();
         }
 
-        protected IntcodeComputer GetIntcodeComputer(string input, int[] allowedOperations = null)
+        protected IntcodeComputer GetIntcodeComputer(string input, int[] allowedOperations = null, long? defaultInput = null)
         {
             var parsedInput = input.Split(',').Select(s => long.Parse(s.Trim())).ToArray();
-            return IntcodeComputerFactory.CreateIntcodeComputer(parsedInput, allowedOperations);
+            return IntcodeComputerFactory.CreateIntcodeComputer(parsedInput, allowedOperations, defaultInput);
         }
     }
 }

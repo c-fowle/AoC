@@ -80,14 +80,14 @@ namespace AoC._2019.Classes
             // OPCODE 99 - EXIT CODE: x => return exit signal
             OpcodeDefinitions.Add(99, new Opcode(99, 0, null, new Func<OperationInput, long[], OperationResult>((input, memory) => new OperationResult(true))));
         }
-        public IntcodeComputer CreateIntcodeComputer(long[] initialMemoryState, int[] allowedOperations=null)
+        public IntcodeComputer CreateIntcodeComputer(long[] initialMemoryState, int[] allowedOperations=null, long? defaultInput = null)
         {
             if (allowedOperations == null) allowedOperations = OpcodeDefinitions.Keys.ToArray();
 
             var operationList = new List<Opcode>();
             allowedOperations.ForEach(i => operationList.Add(OpcodeDefinitions[i]));
 
-            return new IntcodeComputer(operationList, initialMemoryState);
+            return new IntcodeComputer(operationList, initialMemoryState, defaultInput);
         }
     }
 }

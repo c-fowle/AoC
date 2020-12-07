@@ -25,7 +25,23 @@ namespace AoC._2019
 
         protected override string Part1(string input)
         {
-            throw new NotImplementedException();
+            while (true)
+            {
+                Console.WriteLine("Address:");
+                var memAddress = long.Parse(Console.ReadLine());
+
+                var computer = GetIntcodeComputer(input, defaultInput: -1);
+                computer.RunProgram(new IntcodeProgramInput(inputs: new[] { memAddress }));
+
+                while (computer.OutputReady || !computer.Paused)
+                {
+                    Console.WriteLine(computer.GetNextOutput());
+                }
+
+                Console.WriteLine("Complete");
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
 
         protected override string Part2(string input)
