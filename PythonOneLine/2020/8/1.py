@@ -1,0 +1,1 @@
+print((lambda f, a, b, c, d: f(f, a, b, c, d))(lambda f, a, b, c, d: d if b in c else f(f, a, b + (int(a[b][1]) if a[b][0] == 'jmp' else 1), [b] + c, d + (int(a[b][1]) if a[b][0] == 'acc' else 0)), [s.split(' ') for s in open('_').read().split('\n') if s != ''], 0, [], 0))
